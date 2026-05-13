@@ -289,13 +289,15 @@ You help users with:
 3. Calculations and unit conversions
 4. What's new in JioJoin — features and announcements
 5. Exploring interests — cricket, cooking, finance, fitness, etc.
-6. ANY general question — you can answer anything
+6. ANY general question — answer from your training knowledge
+ 
+IMPORTANT: Do NOT use brave_search or any web search tool. You do not have internet access. For real-time questions (weather, live scores, stock prices), clearly say you don't have live data and give the best answer you can from training knowledge.
  
 Rules:
 - Keep responses short and mobile-friendly
 - Respond in the same language the user uses (English or Hindi)
 - Be warm, conversational, and helpful
-- Always use the available tools when relevant
+- Use the provided tools for tasks/reminders/interests only
 आप हिंदी में भी उतनी ही कुशलता से जवाब दे सकते हैं।`;
  
 const GROQ_TOOLS = [
@@ -308,6 +310,7 @@ const GROQ_TOOLS = [
   {type:'function',function:{name:'get_whats_new',description:'Show JioJoin announcements.',parameters:{type:'object',properties:{},required:[]}}},
   {type:'function',function:{name:'update_user_interests',description:'Save user interests.',parameters:{type:'object',properties:{topics:{type:'array',items:{type:'string'}}},required:['topics']}}},
   {type:'function',function:{name:'explore_interest',description:'Get content about a topic.',parameters:{type:'object',properties:{topic:{type:'string'}},required:['topic']}}},
+  {type:'function',function:{name:'brave_search',description:'Search the web for real-time information.',parameters:{type:'object',properties:{query:{type:'string',description:'Search query'}},required:['query']}}},
 ];
  
 const NEWS_DATA = [
@@ -722,6 +725,9 @@ async function dispatchTool(name, args) {
       return { success: true, interests };
     case 'explore_interest':
       return { topic: args.topic, interests, content: `Tell the user something interesting and engaging about "${args.topic}".` };
+    case 'brave_search':
+      // We don't have real internet access — tell the model to answer from training knowledge
+      return { error: 'Web search is not available in this environment. Please answer the question using your training knowledge and clearly mention that the data may not be real-time.' };
     default:
       return { error: 'Unknown tool: ' + name };
   }
