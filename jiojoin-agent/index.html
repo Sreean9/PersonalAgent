@@ -23,6 +23,32 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
  
 /* ── Shell ── */
 .shell{width:100%;height:100%;background:var(--bg);position:fixed;top:0;left:0;display:flex;flex-direction:column;overflow:hidden}
+.hidden{display:none!important}
+ 
+/* ── Auth Screen ── */
+.auth-screen{
+  position:fixed;inset:0;background:linear-gradient(160deg,var(--blue-dark) 0%,var(--blue) 60%,var(--blue-lt) 100%);
+  display:flex;align-items:center;justify-content:center;padding:24px;z-index:100;
+}
+.auth-card{
+  background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.auth-logo{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-lt));display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;}
+.auth-title{text-align:center;font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
+.auth-sub{text-align:center;font-size:12px;color:var(--text3);margin-bottom:24px}
+.auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:20px;gap:3px}
+.auth-tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;color:var(--text3);border:none;background:transparent;transition:all .2s}
+.auth-tab.active{background:#fff;color:var(--blue);box-shadow:var(--shadow)}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.auth-field input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:14px;outline:none;color:var(--text);background:var(--bg);transition:border-color .2s}
+.auth-field input:focus{border-color:var(--blue);background:#fff}
+.auth-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),var(--blue-lt));color:#fff;border:none;border-radius:var(--radius-xs);font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity .2s}
+.auth-btn:disabled{opacity:.6;cursor:not-allowed}
+.auth-err{background:var(--red-pale);color:var(--red);font-size:12px;padding:9px 12px;border-radius:var(--radius-xs);margin-top:12px;display:none;text-align:center;font-weight:500}
+.auth-err.show{display:block}
+.backend-note{font-size:10px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.5}
  
 /* ── Status bar ── */
 .status-bar{height:40px;background:var(--blue-dark);display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0}
@@ -36,18 +62,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
 .topbar-name{color:#fff;font-size:14px;font-weight:700;line-height:1.2}
 .topbar-sub{color:rgba(255,255,255,.65);font-size:10px;display:flex;align-items:center;gap:4px;margin-top:1px}
 .online-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;flex-shrink:0}
-.icon-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.icon-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
  
-/* ── Key bar ── */
-.keybar{background:#FFFBEB;border-bottom:1.5px solid #FDE68A;padding:7px 12px;display:flex;align-items:center;gap:7px;flex-shrink:0}
-.keybar label{font-size:11px;font-weight:700;color:#92400E;white-space:nowrap}
-.keybar input{flex:1;padding:5px 8px;border:1.5px solid #FCD34D;border-radius:var(--radius-xs);font-size:12px;outline:none;color:var(--text);background:#fff;min-width:0}
-.keybar input:focus{border-color:#F59E0B}
-.keybar .go-btn{padding:5px 12px;background:#D97706;color:#fff;border:none;border-radius:var(--radius-xs);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
-.mode-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
-.mode-pill.live{background:#D1FAE5;color:#065F46}
-.mode-pill.demo{background:#FEF3C7;color:#92400E}
-.mode-pill.testing{background:#DBEAFE;color:#1D4ED8}
+/* ── Mode bar ── */
+.modebar{background:var(--green-pale);border-bottom:1px solid #BBF7D0;padding:6px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.mode-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:#D1FAE5;color:#065F46}
+.modebar-txt{font-size:11px;color:var(--green);font-weight:500}
+.user-chip{margin-left:auto;font-size:11px;font-weight:600;color:var(--text2);background:var(--surface);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
  
 /* ── Screens ── */
 .screen{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
@@ -60,7 +81,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
 .welcome h3{font-size:14px;font-weight:700;margin-bottom:4px}
 .welcome p{font-size:12px;color:var(--text2);line-height:1.5}
 .qgrid{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
-.qp{padding:6px 10px;background:var(--blue-pale);border:1.5px solid #BFDBFE;border-radius:20px;font-size:11px;color:var(--blue);cursor:pointer;font-weight:500;-webkit-tap-highlight-color:transparent;transition:all .15s}
+.qp{padding:6px 10px;background:var(--blue-pale);border:1.5px solid #BFDBFE;border-radius:20px;font-size:11px;color:var(--blue);cursor:pointer;font-weight:500;-webkit-tap-highlight-color:transparent}
 .qp:active{background:var(--blue);color:#fff}
  
 .msg-row{display:flex;gap:7px;align-items:flex-end;max-width:90%}
@@ -74,7 +95,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
 .bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
 .bubble.bot{background:var(--surface);color:var(--text);border-bottom-left-radius:4px}
 .bubble.bot strong{color:var(--blue-dark)}
-.bubble.err-bubble{background:var(--red-pale);border:1px solid #FECACA}
 .tools-row{display:flex;flex-wrap:wrap;gap:4px}
 .tool-tag{font-size:10px;padding:2px 7px;border-radius:8px;background:var(--green-pale);color:var(--green);font-weight:600;border:1px solid #BBF7D0}
 .tool-tag::before{content:'⚡ '}
@@ -92,10 +112,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
 .send-btn{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-lt));border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:opacity .2s}
 .send-btn:disabled{opacity:.4;cursor:not-allowed}
  
-/* ── Tasks ── */
-.screen-hdr{padding:14px 14px 10px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
-.screen-title{font-size:17px;font-weight:800;color:var(--text)}
-.screen-sub{font-size:12px;color:var(--text3);margin-top:2px}
+/* ── Tasks / Reminders ── */
+.screen-hdr{padding:14px 14px 10px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.screen-hdr-left .screen-title{font-size:17px;font-weight:800;color:var(--text)}
+.screen-hdr-left .screen-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.refresh-btn{padding:6px 12px;background:var(--blue-pale);color:var(--blue);border:1px solid #BFDBFE;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer}
 .list-body{flex:1;overflow-y:auto;padding:11px;-webkit-overflow-scrolling:touch}
 .todo-card{background:var(--surface);border-radius:var(--radius);padding:11px 13px;margin-bottom:9px;box-shadow:var(--shadow);border-left:4px solid var(--border);display:flex;align-items:flex-start;gap:11px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .todo-card.high{border-left-color:var(--red)}
@@ -114,20 +135,15 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
 .chip.pl{background:var(--green-pale);color:var(--green)}
 .chip.st{background:var(--blue-pale);color:var(--blue)}
 .chip.due{background:#F5F3FF;color:#7C3AED}
- 
-/* ── Reminders ── */
 .rem-card{background:var(--surface);border-radius:var(--radius);padding:13px;margin-bottom:9px;box-shadow:var(--shadow);display:flex;align-items:center;gap:11px}
 .rem-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#FEF3C7,#FDE68A);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
 .rem-body{flex:1;min-width:0}
 .rem-title{font-size:13px;font-weight:600}
 .rem-time{font-size:11px;color:var(--text3);margin-top:2px}
- 
-/* ── News ── */
 .news-card{background:var(--surface);border-radius:var(--radius);padding:13px;margin-bottom:9px;box-shadow:var(--shadow);border-top:3px solid var(--blue-lt)}
 .news-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);margin-bottom:3px}
 .news-title{font-size:13px;font-weight:700;margin-bottom:4px}
 .news-body{font-size:12px;color:var(--text2);line-height:1.5}
- 
 .empty{text-align:center;padding:48px 18px;color:var(--text3)}
 .empty-icon{font-size:40px;margin-bottom:10px}
 .empty-msg{font-size:12px;line-height:1.5}
@@ -143,91 +159,118 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
 /* ── Toast ── */
 #toasts{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:6px;width:88%;pointer-events:none}
 .toast{padding:10px 15px;border-radius:10px;font-size:12px;font-weight:600;color:#fff;box-shadow:var(--shadow-md);animation:tin .2s ease;text-align:center}
-.toast.ok{background:var(--green)}
-.toast.err{background:var(--red)}
-.toast.info{background:var(--blue)}
+.toast.ok{background:var(--green)}.toast.err{background:var(--red)}.toast.info{background:var(--blue)}
 @keyframes tin{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
  
-/* ── Modal ── */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal-bg.hidden{display:none}
-.modal{background:#fff;border-radius:var(--radius);padding:22px 18px;width:100%;max-width:340px;box-shadow:var(--shadow-md)}
-.modal h3{font-size:15px;font-weight:700;margin-bottom:8px}
-.modal p{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:14px}
-.modal input{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;outline:none;margin-bottom:12px;color:var(--text)}
-.modal input:focus{border-color:var(--blue)}
-.modal-btns{display:flex;gap:8px}
-.modal-btns button{flex:1;padding:10px;border-radius:var(--radius-xs);font-size:13px;font-weight:700;cursor:pointer;border:none}
-.btn-cancel{background:var(--bg);color:var(--text2)}
-.btn-apply{background:var(--blue);color:#fff}
- 
+/* ── Loading spinner ── */
+.spinner-screen{position:fixed;inset:0;background:var(--blue-dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:16px}
+.spinner{width:44px;height:44px;border:4px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-txt{color:rgba(255,255,255,.8);font-size:14px;font-weight:500}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px}
 </style>
 </head>
 <body>
-<div class="shell">
  
-  <!-- Status bar -->
+<!-- Loading spinner -->
+<div class="spinner-screen" id="spinner">
+  <div class="spinner"></div>
+  <div class="spinner-txt">Starting JioJoin AI…</div>
+</div>
+ 
+<!-- Auth screen -->
+<div class="auth-screen hidden" id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">🤖</div>
+    <div class="auth-title">JioJoin AI</div>
+    <div class="auth-sub">Your personal AI assistant</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+    <div class="auth-field">
+      <label>Username</label>
+      <input type="text" id="auth-user" placeholder="Enter username" autocomplete="username" autocorrect="off" autocapitalize="off"/>
+    </div>
+    <div class="auth-field" id="email-field" style="display:none">
+      <label>Email</label>
+      <input type="email" id="auth-email" placeholder="Enter email"/>
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input type="password" id="auth-pass" placeholder="Enter password" autocomplete="current-password"/>
+    </div>
+    <button class="auth-btn" id="auth-btn" onclick="submitAuth()">Sign In</button>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="backend-note">Connected to JioJoin AI Backend</div>
+  </div>
+</div>
+ 
+<!-- Main app -->
+<div class="shell hidden" id="main-app">
   <div class="status-bar">
     <span class="status-time" id="clock">9:41</span>
     <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
   </div>
- 
-  <!-- Top bar -->
   <div class="topbar">
     <div class="topbar-av">🤖</div>
     <div class="topbar-info">
       <div class="topbar-name">Jio AI Assistant</div>
-      <div class="topbar-sub">
-        <span class="online-dot"></span>
-        <span id="mode-label">Live AI · Llama 3.3-70b</span>
-      </div>
+      <div class="topbar-sub"><span class="online-dot"></span><span>Live · Llama 3.3-70b</span></div>
     </div>
     <button class="icon-btn" onclick="newChat()" title="New chat">✏️</button>
+    <button class="icon-btn" onclick="logout()" title="Sign out" style="margin-left:4px">🚪</button>
+  </div>
+  <div class="modebar">
+    <span class="mode-pill">Production</span>
+    <span class="modebar-txt">Live AI · Real database</span>
+    <span class="user-chip" id="user-chip">User</span>
   </div>
  
-  <!-- Mode pill bar -->
-  <div class="keybar">
-    <span class="mode-pill live" id="mode-pill">Live AI</span>
-    <span style="flex:1;font-size:11px;color:var(--text2)" id="key-hint">🟢 Powered by Llama 3.3-70b · Groq</span>
-  </div>
- 
-  <!-- ── CHAT ── -->
+  <!-- Chat -->
   <div class="screen active" id="screen-chat">
     <div class="messages" id="msgs"></div>
     <div class="input-wrap">
       <div class="input-row">
-        <textarea id="inp" rows="1" placeholder="Ask Jio anything…"
-          onkeydown="onKey(event)" oninput="autoResize(this)"></textarea>
+        <textarea id="inp" rows="1" placeholder="Ask Jio anything…" onkeydown="onKey(event)" oninput="autoResize(this)"></textarea>
         <button class="send-btn" id="send-btn" onclick="send()">➤</button>
       </div>
     </div>
   </div>
  
-  <!-- ── TASKS ── -->
+  <!-- Tasks -->
   <div class="screen" id="screen-tasks">
     <div class="screen-hdr">
-      <div class="screen-title">My Tasks</div>
-      <div class="screen-sub" id="tasks-sub">No pending tasks</div>
+      <div class="screen-hdr-left">
+        <div class="screen-title">My Tasks</div>
+        <div class="screen-sub" id="tasks-sub">Loading…</div>
+      </div>
+      <button class="refresh-btn" onclick="loadTodos()">↻ Refresh</button>
     </div>
     <div class="list-body" id="todo-list"></div>
   </div>
  
-  <!-- ── REMINDERS ── -->
+  <!-- Reminders -->
   <div class="screen" id="screen-reminders">
     <div class="screen-hdr">
-      <div class="screen-title">Reminders</div>
-      <div class="screen-sub" id="rem-sub">No active reminders</div>
+      <div class="screen-hdr-left">
+        <div class="screen-title">Reminders</div>
+        <div class="screen-sub" id="rem-sub">Loading…</div>
+      </div>
+      <button class="refresh-btn" onclick="loadReminders()">↻ Refresh</button>
     </div>
     <div class="list-body" id="rem-list"></div>
   </div>
  
-  <!-- ── WHAT'S NEW ── -->
+  <!-- What's New -->
   <div class="screen" id="screen-news">
     <div class="screen-hdr">
-      <div class="screen-title">What's New</div>
-      <div class="screen-sub">Latest JioJoin updates &amp; features</div>
+      <div class="screen-hdr-left">
+        <div class="screen-title">What's New</div>
+        <div class="screen-sub">Latest JioJoin updates</div>
+      </div>
+      <button class="refresh-btn" onclick="loadNews()">↻ Refresh</button>
     </div>
     <div class="list-body" id="news-list"></div>
   </div>
@@ -247,74 +290,50 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
       <div class="nav-icon-wrap"><span class="nav-icon">🆕</span></div><span>What's New</span>
     </button>
   </div>
- 
-</div><!-- .shell -->
- 
+</div>
  
 <div id="toasts"></div>
  
 <script>
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  CONFIG — Update BACKEND_URL after Railway deployment
+// ═══════════════════════════════════════════════════════════════
+const BACKEND_URL = 'https://YOUR-APP.railway.app'; // ← UPDATE THIS after Railway deploy
+ 
+// ═══════════════════════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════════════
-let todos = [], reminders = [], interests = [], todoId = 1, remId = 1;
-let groqKey = '', chatHistory = [], busy = false;
+// ═══════════════════════════════════════════════════════════════
+let jwtToken   = null;
+let sessionId  = null;
+let username   = null;
+let authMode   = 'login'; // 'login' | 'register'
+let busy       = false;
  
-const GROQ_MODEL    = 'llama-3.3-70b-versatile';
-const GROQ_URL      = 'https://api.groq.com/openai/v1/chat/completions';
-const FETCH_TIMEOUT = 20000; // 20 seconds
- 
-const SYSTEM_PROMPT = `You are Jio, a friendly personal AI assistant built into the JioJoin mobile app by Reliance Jio.
- 
-You help users with:
-1. To-Do list — add, view, complete, delete tasks
-2. Reminders — set and list reminders
-3. Calculations and unit conversions
-4. What's new in JioJoin — features and announcements
-5. Exploring interests — cricket, cooking, finance, fitness, etc.
-6. ANY general question — answer from your training knowledge
- 
-IMPORTANT: Do NOT use brave_search or any web search tool. You do not have internet access. For real-time questions (weather, live scores, stock prices), clearly say you don't have live data and give the best answer you can from training knowledge.
- 
-Rules:
-- Keep responses short and mobile-friendly
-- Respond in the same language the user uses (English or Hindi)
-- Be warm, conversational, and helpful
-- Use the provided tools for tasks/reminders/interests only
-आप हिंदी में भी उतनी ही कुशलता से जवाब दे सकते हैं।`;
- 
-const GROQ_TOOLS = [
-  {type:'function',function:{name:'add_todo',description:'Create a new task.',parameters:{type:'object',properties:{title:{type:'string'},priority:{type:'string',enum:['low','medium','high']},due_date:{type:'string'}},required:['title']}}},
-  {type:'function',function:{name:'list_todos',description:'List tasks.',parameters:{type:'object',properties:{status:{type:'string',enum:['pending','in_progress','completed']}},required:[]}}},
-  {type:'function',function:{name:'update_todo',description:'Update task status.',parameters:{type:'object',properties:{todo_id:{type:'string'},status:{type:'string',enum:['pending','in_progress','completed']}},required:['todo_id','status']}}},
-  {type:'function',function:{name:'delete_todo',description:'Delete a task.',parameters:{type:'object',properties:{todo_id:{type:'string'}},required:['todo_id']}}},
-  {type:'function',function:{name:'set_reminder',description:'Set a reminder.',parameters:{type:'object',properties:{title:{type:'string'},remind_at:{type:'string'}},required:['title','remind_at']}}},
-  {type:'function',function:{name:'list_reminders',description:'List reminders.',parameters:{type:'object',properties:{},required:[]}}},
-  {type:'function',function:{name:'get_whats_new',description:'Show JioJoin announcements.',parameters:{type:'object',properties:{},required:[]}}},
-  {type:'function',function:{name:'update_user_interests',description:'Save user interests.',parameters:{type:'object',properties:{topics:{type:'array',items:{type:'string'}}},required:['topics']}}},
-  {type:'function',function:{name:'explore_interest',description:'Get content about a topic.',parameters:{type:'object',properties:{topic:{type:'string'}},required:['topic']}}},
-  {type:'function',function:{name:'brave_search',description:'Search the web for real-time information.',parameters:{type:'object',properties:{query:{type:'string',description:'Search query'}},required:['query']}}},
-];
- 
-const NEWS_DATA = [
-  {cat:'Feature',title:'Welcome to JioJoin AI! 🎉',body:'Your personal assistant is here. Manage tasks, set reminders, calculate anything, and discover new interests — all in one chat.'},
-  {cat:'Feature',title:'Hindi Support is Live!',body:'आप अब हिंदी में बात कर सकते हैं! The agent responds in the language you write in.'},
-  {cat:'Feature',title:'Smart To-Do Tracking',body:'Set priorities (high/medium/low), due dates, and tags. Just describe your task naturally and Jio handles the rest.'},
-  {cat:'Tip',title:'Explore Your Interests',body:"Tell Jio what you're curious about — cricket, cooking, finance, fitness — and get personalised content every day."},
-  {cat:'Coming Soon',title:'JioJoin Premium',body:'Advanced scheduling, team task sharing, and priority AI support. Coming soon for JioJoin Premium users.'},
-];
- 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  INIT
-// ═══════════════════════════════════════════════════════
-window.onload = () => {
+// ═══════════════════════════════════════════════════════════════
+window.onload = async () => {
   updateClock();
   setInterval(updateClock, 30000);
-  renderNews();
-  renderTodos();
-  renderReminders();
-  renderWelcome();
+ 
+  // Check backend is reachable
+  try {
+    const res = await fetch(BACKEND_URL + '/health', { signal: AbortSignal.timeout(8000) });
+    if (res.ok) {
+      hide('spinner'); show('auth-screen');
+    } else {
+      showSpinnerErr('Backend returned error ' + res.status);
+    }
+  } catch (e) {
+    showSpinnerErr('Cannot reach backend.\n\nUpdate BACKEND_URL in index.html\nwith your Railway URL.');
+  }
 };
+ 
+function showSpinnerErr(msg) {
+  document.querySelector('.spinner-txt').innerHTML =
+    '⚠️ ' + msg.replace(/\n/g,'<br/>');
+  document.querySelector('.spinner').style.display = 'none';
+}
  
 function updateClock() {
   const n = new Date();
@@ -322,122 +341,143 @@ function updateClock() {
     n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}).replace(' ','');
 }
  
-// ═══════════════════════════════════════════════════════
+function show(id){ document.getElementById(id).classList.remove('hidden'); }
+function hide(id){ document.getElementById(id).classList.add('hidden'); }
+ 
+// ═══════════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════════
+function switchTab(mode) {
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+  document.getElementById('tab-register').classList.toggle('active', mode === 'register');
+  document.getElementById('auth-btn').textContent = mode === 'login' ? 'Sign In' : 'Create Account';
+  document.getElementById('email-field').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('auth-err').classList.remove('show');
+}
+ 
+async function submitAuth() {
+  const user = document.getElementById('auth-user').value.trim();
+  const pass = document.getElementById('auth-pass').value.trim();
+  const email = document.getElementById('auth-email').value.trim();
+  const errEl = document.getElementById('auth-err');
+  const btn = document.getElementById('auth-btn');
+ 
+  if (!user || !pass) { showAuthErr('Please enter username and password.'); return; }
+  if (authMode === 'register' && !email) { showAuthErr('Please enter your email.'); return; }
+ 
+  btn.disabled = true;
+  btn.textContent = authMode === 'login' ? 'Signing in…' : 'Creating account…';
+  errEl.classList.remove('show');
+ 
+  try {
+    let token;
+    if (authMode === 'register') {
+      const res = await apiCall('/auth/register', 'POST', { username: user, email, password: pass });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.detail || 'Registration failed'); }
+      // Auto-login after register
+      const lr = await apiCall('/auth/login', 'POST', { username: user, password: pass });
+      if (!lr.ok) { const d = await lr.json(); throw new Error(d.detail || 'Login failed'); }
+      const ld = await lr.json();
+      token = ld.access_token;
+    } else {
+      const res = await apiCall('/auth/login', 'POST', { username: user, password: pass });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.detail || 'Invalid credentials'); }
+      const d = await res.json();
+      token = d.access_token;
+    }
+ 
+    jwtToken = token;
+    username = user;
+    document.getElementById('user-chip').textContent = '👤 ' + user;
+    hide('auth-screen'); show('main-app');
+    renderWelcome();
+    await Promise.all([loadTodos(), loadReminders(), loadNews()]);
+ 
+  } catch (e) {
+    showAuthErr(e.message);
+  }
+ 
+  btn.disabled = false;
+  btn.textContent = authMode === 'login' ? 'Sign In' : 'Create Account';
+}
+ 
+function showAuthErr(msg) {
+  const el = document.getElementById('auth-err');
+  el.textContent = msg; el.classList.add('show');
+}
+ 
+function logout() {
+  jwtToken = null; sessionId = null; username = null;
+  hide('main-app');
+  document.getElementById('auth-user').value = '';
+  document.getElementById('auth-pass').value = '';
+  document.getElementById('auth-err').classList.remove('show');
+  show('auth-screen');
+  toast('Signed out', 'info');
+}
+ 
+// ═══════════════════════════════════════════════════════════════
+//  API HELPERS
+// ═══════════════════════════════════════════════════════════════
+function apiCall(path, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    signal: AbortSignal.timeout(25000),
+  };
+  if (jwtToken) opts.headers['Authorization'] = 'Bearer ' + jwtToken;
+  if (body) opts.body = JSON.stringify(body);
+  return fetch(BACKEND_URL + path, opts);
+}
+ 
+// ═══════════════════════════════════════════════════════════════
 //  NAV
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'tasks') loadTodos();
+  if (name === 'reminders') loadReminders();
+  if (name === 'news') loadNews();
 }
  
-// ═══════════════════════════════════════════════════════
-//  API KEY MODAL
-// ═══════════════════════════════════════════════════════
-function openKeyModal() {
-  document.getElementById('key-modal').classList.remove('hidden');
-  document.getElementById('key-status').textContent = '';
-  document.getElementById('key-input').value = groqKey || '';
-  setTimeout(() => document.getElementById('key-input').focus(), 100);
-}
- 
-function closeKeyModal() {
-  document.getElementById('key-modal').classList.add('hidden');
-}
- 
-async function applyKey() {
-  const key = document.getElementById('key-input').value.trim();
-  if (!key) { setKeyStatus('⚠️ Please paste your Groq API key first.', 'red'); return; }
- 
-  const btn = document.getElementById('apply-btn');
-  btn.disabled = true;
-  btn.textContent = 'Testing…';
-  setKeyStatus('🔄 Connecting to Groq API…', '#1D4ED8');
-  document.getElementById('mode-pill').className = 'mode-pill testing';
-  document.getElementById('mode-pill').textContent = 'Testing…';
- 
+// ═══════════════════════════════════════════════════════════════
+//  DATA LOADERS
+// ═══════════════════════════════════════════════════════════════
+async function loadTodos() {
   try {
-    const res = await fetchWithTimeout(GROQ_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: [{ role: 'user', content: 'Say "OK" in one word.' }],
-        max_tokens: 5,
-        temperature: 0,
-      })
-    }, 15000);
- 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const msg = err?.error?.message || res.statusText;
-      if (res.status === 401) {
-        setKeyStatus('❌ Invalid key — Groq rejected it. Check you copied the full key.', 'red');
-      } else if (res.status === 429) {
-        setKeyStatus('⚠️ Rate limit — but key is valid! Activating anyway.', 'orange');
-        activateLiveMode(key);
-      } else {
-        setKeyStatus('❌ Error ' + res.status + ': ' + msg, 'red');
-      }
-      btn.disabled = false; btn.textContent = 'Test & Activate';
-      if (res.status !== 429) {
-        document.getElementById('mode-pill').className = 'mode-pill demo';
-        document.getElementById('mode-pill').textContent = 'Demo';
-      }
-      return;
-    }
- 
-    activateLiveMode(key);
-    setKeyStatus('', '');
-    closeKeyModal();
-    toast('✅ Live AI activated!', 'ok');
-    addBubble('bot', '🟢 **Live AI mode is ON!** I\'m now powered by Llama 3.3-70b (Groq). Ask me anything — tasks, reminders, calculations, or any general question!', []);
- 
-  } catch (e) {
-    const isTimeout = e.message === 'TIMEOUT';
-    setKeyStatus(isTimeout
-      ? '❌ Request timed out. Check your internet connection and try again.'
-      : '❌ Could not reach Groq. Check your internet and try again. (' + e.message + ')', 'red');
-    document.getElementById('mode-pill').className = 'mode-pill demo';
-    document.getElementById('mode-pill').textContent = 'Demo';
-  }
- 
-  btn.disabled = false;
-  btn.textContent = 'Test & Activate';
+    const res = await apiCall('/todos');
+    if (!res.ok) return;
+    const todos = await res.json();
+    renderTodos(todos);
+  } catch { /* silent */ }
 }
  
-function activateLiveMode(key) {
-  groqKey = key;
-  chatHistory = [];
-  document.getElementById('mode-pill').className = 'mode-pill live';
-  document.getElementById('mode-pill').textContent = 'Live AI';
-  document.getElementById('mode-label').textContent = 'Live AI · Llama 3.3-70b';
-  document.getElementById('key-hint').textContent = '✅ Live AI active';
+async function loadReminders() {
+  try {
+    const res = await apiCall('/reminders');
+    if (!res.ok) return;
+    const data = await res.json();
+    renderReminders(data);
+  } catch { /* silent */ }
 }
  
-function setKeyStatus(msg, color) {
-  const el = document.getElementById('key-status');
-  el.textContent = msg;
-  el.style.color = color === 'red' ? 'var(--red)' : color === 'orange' ? '#D97706' : color;
+async function loadNews() {
+  try {
+    const res = await apiCall('/whats-new');
+    if (!res.ok) return;
+    const data = await res.json();
+    renderNews(data);
+  } catch { /* silent */ }
 }
  
-// ═══════════════════════════════════════════════════════
-//  FETCH WITH TIMEOUT
-// ═══════════════════════════════════════════════════════
-function fetchWithTimeout(url, options, ms) {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('TIMEOUT')), ms);
-    fetch(url, options)
-      .then(res => { clearTimeout(timer); resolve(res); })
-      .catch(err => { clearTimeout(timer); reject(err); });
-  });
-}
- 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  RENDER PANELS
-// ═══════════════════════════════════════════════════════
-function renderTodos() {
+// ═══════════════════════════════════════════════════════════════
+function renderTodos(todos = []) {
   const el = document.getElementById('todo-list');
   const pending = todos.filter(t => t.status !== 'completed').length;
   document.getElementById('tasks-sub').textContent =
@@ -447,64 +487,59 @@ function renderTodos() {
   else badge.style.display = 'none';
   if (!todos.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No tasks yet.<br/>Ask Jio to add one in Chat!</div></div>'; return; }
   el.innerHTML = todos.slice().reverse().map(t => `
-    <div class="todo-card ${t.priority} ${t.status==='completed'?'done':''}" onclick="toggleTodo(${t.id})">
+    <div class="todo-card ${t.priority||'medium'} ${t.status==='completed'?'done':''}">
       <div class="chk ${t.status==='completed'?'ticked':''}">${t.status==='completed'?'✓':''}</div>
       <div class="todo-body">
         <div class="todo-title ${t.status==='completed'?'done':''}">${esc(t.title)}</div>
         <div class="chips">
-          <span class="chip p${t.priority[0]}">${t.priority}</span>
-          <span class="chip st">${t.status.replace('_',' ')}</span>
-          ${t.due ? `<span class="chip due">📅 ${t.due}</span>` : ''}
+          <span class="chip p${(t.priority||'m')[0]}">${t.priority||'medium'}</span>
+          <span class="chip st">${(t.status||'pending').replace('_',' ')}</span>
+          ${t.due_date ? `<span class="chip due">📅 ${esc(t.due_date)}</span>` : ''}
         </div>
       </div>
     </div>`).join('');
 }
  
-function renderReminders() {
+function renderReminders(data = []) {
+  const reminders = Array.isArray(data) ? data : (data.reminders || []);
   const el = document.getElementById('rem-list');
-  const count = reminders.length;
-  document.getElementById('rem-sub').textContent = count ? `${count} active reminder${count>1?'s':''}` : 'No active reminders';
+  document.getElementById('rem-sub').textContent = reminders.length ? `${reminders.length} active reminder${reminders.length>1?'s':''}` : 'No active reminders';
   const badge = document.getElementById('rem-badge');
-  if (count > 0) { badge.style.display = 'flex'; badge.textContent = count; }
-  else badge.style.display = 'none';
-  if (!reminders.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div><div class="empty-msg">No reminders yet.<br/>Ask Jio to set one!</div></div>'; return; }
+  if (reminders.length > 0) { badge.style.display='flex'; badge.textContent=reminders.length; }
+  else badge.style.display='none';
+  if (!reminders.length) { el.innerHTML='<div class="empty"><div class="empty-icon">🔔</div><div class="empty-msg">No reminders yet.<br/>Ask Jio to set one!</div></div>'; return; }
   el.innerHTML = reminders.map(r => `
     <div class="rem-card">
       <div class="rem-icon">🔔</div>
       <div class="rem-body">
         <div class="rem-title">${esc(r.title)}</div>
-        <div class="rem-time">${esc(r.time)}</div>
+        <div class="rem-time">${esc(r.remind_at||'')}</div>
       </div>
     </div>`).join('');
 }
  
-function renderNews() {
-  document.getElementById('news-list').innerHTML = NEWS_DATA.map(n => `
+function renderNews(data = []) {
+  const items = Array.isArray(data) ? data : (data.announcements || []);
+  const el = document.getElementById('news-list');
+  if (!items.length) { el.innerHTML='<div class="empty"><div class="empty-icon">🆕</div><div class="empty-msg">No announcements yet.</div></div>'; return; }
+  el.innerHTML = items.map(n => `
     <div class="news-card">
-      <div class="news-cat">${n.cat}</div>
-      <div class="news-title">${n.title}</div>
-      <div class="news-body">${n.body}</div>
+      <div class="news-cat">${esc(n.category||'Update')}</div>
+      <div class="news-title">${esc(n.title||'')}</div>
+      <div class="news-body">${esc(n.body||n.content||'')}</div>
     </div>`).join('');
 }
  
-function toggleTodo(id) {
-  const t = todos.find(x => x.id === id);
-  if (!t) return;
-  t.status = t.status === 'completed' ? 'pending' : 'completed';
-  renderTodos();
-  toast(t.status === 'completed' ? 'Task done! ✅' : 'Task reopened', 'ok');
-}
- 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  CHAT UI
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function renderWelcome() {
   document.getElementById('msgs').innerHTML = `
     <div class="welcome">
       <div class="jio-av-big">🤖</div>
       <h3>Namaste! I'm Jio 👋</h3>
-      <p>Your personal AI assistant inside JioJoin.<br/>
-         Tasks · Reminders · Calculator · Converter<br/>
+      <p>Your personal AI assistant — powered by Llama 3.3-70b.<br/>
+         All your data is saved securely in the cloud.<br/>
          <strong>आप हिंदी में भी बात कर सकते हैं!</strong></p>
       <div class="qgrid">
         <span class="qp" onclick="qsend(this)">Add task: Review Q2 report by Friday</span>
@@ -519,21 +554,21 @@ function renderWelcome() {
 }
  
 function newChat() {
-  todos = []; reminders = []; interests = []; todoId = 1; remId = 1; chatHistory = [];
-  renderTodos(); renderReminders(); renderWelcome();
+  sessionId = null;
+  renderWelcome();
   showScreen('chat');
   toast('New session started', 'info');
 }
  
-function onKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
-function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 80) + 'px'; }
-function qsend(el) { sendText(el.textContent.trim()); }
+function onKey(e) { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; }
+function qsend(el){ sendText(el.textContent.trim()); }
  
 function send() {
   const el = document.getElementById('inp');
   const txt = el.value.trim();
   if (!txt || busy) return;
-  el.value = ''; el.style.height = 'auto';
+  el.value=''; el.style.height='auto';
   sendText(txt);
 }
  
@@ -541,406 +576,76 @@ async function sendText(txt) {
   if (busy) return;
   showScreen('chat');
   addBubble('user', txt);
-  showTyping();
-  busy = true;
-  document.getElementById('send-btn').disabled = true;
+  showTyping(); busy=true;
+  document.getElementById('send-btn').disabled=true;
  
-  let reply = '', tools = [];
   try {
-    if (groqKey) {
-      ({ reply, tools } = await callGroqLive(txt));
-    } else {
-      await sleep(600 + Math.random() * 500);
-      ({ reply, tools } = agentRespond(txt));
+    const res = await apiCall('/chat', 'POST', { message: txt, session_id: sessionId });
+    if (!res.ok) {
+      if (res.status===401) { logout(); toast('Session expired. Please sign in again.','err'); return; }
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.detail || 'Error ' + res.status);
     }
-  } catch (e) {
-    reply = buildErrorMsg(e.message || 'Unknown error');
-    groqKey = '';
-    document.getElementById('mode-pill').className = 'mode-pill demo';
-    document.getElementById('mode-pill').textContent = 'Demo';
-    document.getElementById('mode-label').textContent = 'Demo mode · tap 🔑 for Live AI';
-    document.getElementById('key-hint').textContent = 'Tap 🔑 above to add your Groq key for full Live AI';
+    const data = await res.json();
+    sessionId = data.session_id;
+    hideTyping();
+    addBubble('bot', data.reply, data.tools_used || []);
+    // Refresh todos/reminders after chat (agent may have updated them)
+    await Promise.all([loadTodos(), loadReminders()]);
+  } catch(e) {
+    hideTyping();
+    addBubble('bot', '⚠️ **Error:** ' + e.message + '\n\nPlease check your connection and try again.', []);
   }
  
-  hideTyping();
-  addBubble('bot', reply, tools);
-  busy = false;
-  document.getElementById('send-btn').disabled = false;
+  busy=false;
+  document.getElementById('send-btn').disabled=false;
 }
  
-function buildErrorMsg(msg) {
-  msg = msg.toLowerCase();
-  if (msg.includes('timeout')) return '⏱️ **Request timed out.**\n\nGroq took too long to respond. This can happen on slow connections.\n\nTap 🔑 to re-enter your key and try again.';
-  if (msg.includes('failed to fetch') || msg.includes('networkerror') || msg.includes('network')) return '🌐 **Network error.**\n\nCould not reach Groq API. Please check your internet connection, then tap 🔑 to re-activate Live AI.';
-  if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('invalid')) return '🔑 **API key rejected.**\n\nTap 🔑 to enter a valid Groq key. Get one free at **console.groq.com**.';
-  if (msg.includes('429')) return '⏳ **Rate limit reached** on the free Groq tier. Wait 30 seconds and try again.';
-  return '⚠️ **Something went wrong:** ' + msg + '\n\nTap 🔑 to re-enter your Groq key or continue in Demo mode.';
+let typingEl=null;
+function showTyping(){
+  const msgs=document.getElementById('msgs');
+  typingEl=document.createElement('div');
+  typingEl.className='msg-row bot';
+  typingEl.innerHTML='<div class="av b">🤖</div><div class="mmeta"><div class="typing-bub"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  msgs.appendChild(typingEl); msgs.scrollTop=msgs.scrollHeight;
 }
+function hideTyping(){ if(typingEl){typingEl.remove();typingEl=null;} }
  
-let typingEl = null;
-function showTyping() {
-  const msgs = document.getElementById('msgs');
-  typingEl = document.createElement('div');
-  typingEl.className = 'msg-row bot';
-  typingEl.innerHTML = '<div class="av b">🤖</div><div class="mmeta"><div class="typing-bub"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
-  msgs.appendChild(typingEl);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-function hideTyping() { if (typingEl) { typingEl.remove(); typingEl = null; } }
- 
-function addBubble(role, text, tools = []) {
-  const msgs = document.getElementById('msgs');
-  const row = document.createElement('div');
-  row.className = 'msg-row ' + role;
-  const av = document.createElement('div');
-  av.className = 'av ' + (role === 'user' ? 'u' : 'b');
-  av.textContent = role === 'user' ? 'S' : '🤖';
-  const meta = document.createElement('div');
-  meta.className = 'mmeta';
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble ' + role;
-  bubble.innerHTML = fmt(text);
-  meta.appendChild(bubble);
-  if (role === 'bot' && tools.length) {
-    const tr = document.createElement('div');
-    tr.className = 'tools-row';
-    tools.forEach(t => { const s = document.createElement('span'); s.className = 'tool-tag'; s.textContent = t.replace(/_/g, ' '); tr.appendChild(s); });
+function addBubble(role, text, tools=[]) {
+  const msgs=document.getElementById('msgs');
+  const row=document.createElement('div'); row.className='msg-row '+role;
+  const av=document.createElement('div'); av.className='av '+(role==='user'?'u':'b');
+  av.textContent=role==='user'?(username?username[0].toUpperCase():'U'):'🤖';
+  const meta=document.createElement('div'); meta.className='mmeta';
+  const bubble=document.createElement('div'); bubble.className='bubble '+role;
+  bubble.innerHTML=fmt(text); meta.appendChild(bubble);
+  if(role==='bot'&&tools.length){
+    const tr=document.createElement('div'); tr.className='tools-row';
+    tools.forEach(t=>{const s=document.createElement('span');s.className='tool-tag';s.textContent=t.replace(/_/g,' ');tr.appendChild(s);});
     meta.appendChild(tr);
   }
-  row.appendChild(av); row.appendChild(meta);
-  msgs.appendChild(row);
-  msgs.scrollTop = msgs.scrollHeight;
+  row.appendChild(av); row.appendChild(meta); msgs.appendChild(row);
+  msgs.scrollTop=msgs.scrollHeight;
 }
  
-function fmt(t) {
+function fmt(t){
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
     .replace(/__(.*?)__/g,'<em>$1</em>')
     .replace(/\n/g,'<br/>');
 }
  
-// ═══════════════════════════════════════════════════════
-//  LIVE GROQ MODE
-// ═══════════════════════════════════════════════════════
-async function callGroqLive(userMsg) {
-  chatHistory.push({ role: 'user', content: userMsg });
-  const messages = [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory];
-  const toolsUsed = [];
- 
-  for (let round = 0; round < 5; round++) {
-    const res = await fetchWithTimeout(GROQ_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + groqKey },
-      body: JSON.stringify({ model: GROQ_MODEL, messages, tools: GROQ_TOOLS, tool_choice: 'auto', temperature: 0.7, max_tokens: 1024 })
-    }, FETCH_TIMEOUT);
- 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error((err?.error?.message || res.statusText || String(res.status)));
-    }
- 
-    const data = await res.json();
-    const msg = data.choices[0].message;
- 
-    if (!msg.tool_calls || msg.tool_calls.length === 0) {
-      const reply = msg.content || '';
-      chatHistory.push({ role: 'assistant', content: reply });
-      return { reply, tools: toolsUsed };
-    }
- 
-    messages.push({ role: 'assistant', content: msg.content || '', tool_calls: msg.tool_calls });
-    for (const tc of msg.tool_calls) {
-      const name = tc.function.name;
-      let args = {};
-      try { args = JSON.parse(tc.function.arguments); } catch {}
-      toolsUsed.push(name);
-      const result = await dispatchTool(name, args);
-      messages.push({ role: 'tool', tool_call_id: tc.id, name, content: JSON.stringify(result) });
-    }
-  }
-  return { reply: 'Reached max rounds. Please try again.', tools: toolsUsed };
-}
- 
-// ═══════════════════════════════════════════════════════
-//  TOOL DISPATCHER
-// ═══════════════════════════════════════════════════════
-async function dispatchTool(name, args) {
-  switch (name) {
-    case 'add_todo': {
-      const id = todoId++;
-      const priority = args.priority || 'medium';
-      const due = args.due_date ? toNiceDate(args.due_date) : null;
-      todos.push({ id, title: args.title, priority, status: 'pending', due });
-      renderTodos(); showScreen('tasks'); toast('Task added! ✅', 'ok');
-      return { success: true, todo: { id, title: args.title, priority, status: 'pending', due_date: due } };
-    }
-    case 'list_todos': {
-      const f = args.status ? todos.filter(t => t.status === args.status) : todos;
-      return { todos: f.map(t => ({ id: t.id, title: t.title, priority: t.priority, status: t.status, due_date: t.due })) };
-    }
-    case 'update_todo': {
-      const t = todos.find(x => String(x.id) === String(args.todo_id));
-      if (!t) return { success: false, error: 'Task not found' };
-      if (args.status) t.status = args.status;
-      renderTodos(); toast(args.status === 'completed' ? 'Task done! 🎉' : 'Updated', 'ok');
-      return { success: true, todo: { id: t.id, title: t.title, status: t.status } };
-    }
-    case 'delete_todo': {
-      const idx = todos.findIndex(x => String(x.id) === String(args.todo_id));
-      if (idx === -1) return { success: false, error: 'Task not found' };
-      const [removed] = todos.splice(idx, 1);
-      renderTodos();
-      return { success: true, message: `Deleted "${removed.title}"` };
-    }
-    case 'set_reminder': {
-      const id = remId++;
-      reminders.push({ id, title: args.title, time: args.remind_at || 'Soon' });
-      renderReminders(); showScreen('reminders'); toast('Reminder set! 🔔', 'ok');
-      return { success: true, reminder: { id, title: args.title, remind_at: args.remind_at } };
-    }
-    case 'list_reminders':
-      return { reminders: reminders.map(r => ({ id: r.id, title: r.title, remind_at: r.time })) };
-    case 'get_whats_new':
-      showScreen('news');
-      return { announcements: NEWS_DATA };
-    case 'update_user_interests':
-      interests = [...new Set([...interests, ...(args.topics || [])])];
-      return { success: true, interests };
-    case 'explore_interest':
-      return { topic: args.topic, interests, content: `Tell the user something interesting and engaging about "${args.topic}".` };
-    case 'brave_search':
-      // We don't have real internet access — tell the model to answer from training knowledge
-      return { error: 'Web search is not available in this environment. Please answer the question using your training knowledge and clearly mention that the data may not be real-time.' };
-    default:
-      return { error: 'Unknown tool: ' + name };
-  }
-}
- 
-// ═══════════════════════════════════════════════════════
-//  DEMO MODE (rule-based, no key needed)
-// ═══════════════════════════════════════════════════════
-function agentRespond(msg) {
-  const m = msg.toLowerCase().trim();
-  const hi = /[ऀ-ॿ]/.test(msg);
- 
-  if ((/\b(add|create|make|नया|जोड़)\b/.test(m) && /\b(task|todo|काम)\b/.test(m)) || /^(add task:|create task:)/i.test(msg))
-    return handleAddTodo(msg, hi);
- 
-  if ((/\b(show|list|see|view|दिखाओ)\b/.test(m) && /\b(task|todo|काम)\b/.test(m)) || m === 'मेरे सभी काम दिखाओ')
-    return handleListTodos(hi);
- 
-  if (/\b(complete|done|finish|mark|पूरा)\b/.test(m) && /\b(task|todo|काम)\b/.test(m))
-    return handleCompleteTodo(msg, hi);
- 
-  if (/\b(delete|remove|हटाओ)\b/.test(m) && /\b(task|todo|काम)\b/.test(m))
-    return handleDeleteTodo(msg, hi);
- 
-  if (/\b(remind|reminder|याद दिलाओ)\b/.test(m))
-    return handleSetReminder(msg, hi);
- 
-  if (/what'?s new|new feature|new in jiojoin|announcement|नया क्या|अपडेट|\bnews\b/.test(m))
-    return handleWhatsNew(hi);
- 
-  if ((/\bwhat is\b/.test(m) && /[\d%+\-*/]/.test(m)) ||
-      /\b(calculat|compute|percent|sqrt|power|गणना|कितना)\b/.test(m) ||
-      /\d+\s*[+\-*/^%]\s*\d+/.test(m) || /\d+%\s*of\s*\d+/i.test(m))
-    return handleCalculate(msg, hi);
- 
-  if (/\bconvert\b/.test(m) || (/\d/.test(m) && /\b(miles|km|kilogram|pound|celsius|fahrenheit|litre|liter|gallon|kg|lbs|feet|foot|meter|mb|gb|tb)\b/.test(m)))
-    return handleConvert(msg, hi);
- 
-  if (/\b(interest|love|like|enjoy|hobby|cricket|cooking|fitness|finance|music|travel|gaming|पसंद|शौक)\b/.test(m))
-    return handleInterests(msg, hi);
- 
-  if (/\b(tell me about|explore|learn about|facts|tips|latest on|what about|happening)\b/.test(m))
-    return handleExplore(msg, hi);
- 
-  if (/^(hi|hello|hey|namaste|नमस्ते|हैलो|good morning|good evening|हाय)\b/.test(m))
-    return handleGreeting(hi);
- 
-  if (/\b(help|what can you|capabilities|मदद)\b/.test(m))
-    return handleHelp(hi);
- 
-  return handleFallback(hi);
-}
- 
-function handleAddTodo(msg, hi) {
-  let title = msg.replace(/^(add|create|make|please|add task:|create task:|जोड़ो|नया काम)/gi, '')
-                 .replace(/\b(task|todo|काम)\b/gi, '').trim();
-  let priority = 'medium';
-  if (/\b(high|urgent|important|जरूरी)\b/i.test(msg)) priority = 'high';
-  if (/\b(low|later)\b/i.test(msg)) priority = 'low';
-  let due = null;
-  const dm = msg.match(/by\s+([\w\s]+?)(?:,|$|\.)/i) || msg.match(/(monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|tomorrow)/i);
-  if (dm) due = toNiceDate((dm[1] || dm[0]).trim());
-  title = title.replace(/[:,]\s*(high|medium|low|urgent)\s*(priority)?/gi, '').replace(/by\s+\w+/gi, '').trim();
-  if (!title || title.length < 2) title = 'New task';
-  title = cap(title);
-  const id = todoId++;
-  todos.push({ id, title, priority, status: 'pending', due });
-  renderTodos(); showScreen('tasks'); toast('Task added! ✅', 'ok');
-  if (hi) return { reply: `ठीक है! काम जोड़ा:\n\n**"${title}"**\nप्राथमिकता: ${priority}${due ? `\nतारीख: ${due}` : ''}`, tools: ['add_todo'] };
-  return { reply: `Done! Added **"${title}"** — ${priority} priority${due ? `, due ${due}` : ''}. ✅\n\nCheck the Tasks tab!`, tools: ['add_todo'] };
-}
- 
-function handleListTodos(hi) {
-  if (!todos.length) return { reply: hi ? 'अभी कोई काम नहीं है।' : 'No tasks yet! Say **"Add task: Buy groceries"** to get started.', tools: ['list_todos'] };
-  const pending = todos.filter(t => t.status !== 'completed');
-  const done = todos.filter(t => t.status === 'completed');
-  let lines = '';
-  if (pending.length) lines += `**Pending (${pending.length}):**\n` + pending.map((t, i) => `${i+1}. ${t.title} · _${t.priority}_${t.due ? ' · ' + t.due : ''}`).join('\n');
-  if (done.length) lines += `\n\n**Done (${done.length}):**\n` + done.map(t => `✓ ${t.title}`).join('\n');
-  if (hi) return { reply: `आपके काम:\n\n${pending.map((t,i) => `${i+1}. ${t.title} (${t.priority})`).join('\n')}`, tools: ['list_todos'] };
-  return { reply: `Here are your tasks:\n\n${lines}`, tools: ['list_todos'] };
-}
- 
-function handleCompleteTodo(msg, hi) {
-  const pending = todos.filter(t => t.status !== 'completed');
-  if (!pending.length) return { reply: hi ? 'सभी काम पूरे! 🎉' : 'All tasks already done! 🎉', tools: ['update_todo'] };
-  const words = msg.toLowerCase().replace(/\b(mark|complete|done|finish|task|as|the)\b/g, '').trim().split(/\s+/).filter(w => w.length > 2);
-  let matched = pending.find(t => words.some(w => t.title.toLowerCase().includes(w))) || pending[pending.length - 1];
-  matched.status = 'completed'; renderTodos(); toast('Task done! 🎉', 'ok');
-  if (hi) return { reply: `"${matched.title}" पूरा! 🎉`, tools: ['update_todo'] };
-  return { reply: `**"${matched.title}"** marked complete. ✅ Great work!`, tools: ['update_todo'] };
-}
- 
-function handleDeleteTodo(msg, hi) {
-  if (!todos.length) return { reply: 'No tasks to delete.', tools: ['delete_todo'] };
-  const last = todos[todos.length - 1];
-  todos = todos.filter(t => t.id !== last.id); renderTodos();
-  if (hi) return { reply: `"${last.title}" हटा दिया।`, tools: ['delete_todo'] };
-  return { reply: `**"${last.title}"** deleted.`, tools: ['delete_todo'] };
-}
- 
-function handleSetReminder(msg, hi) {
-  let title = msg.replace(/remind(er)?\s*(me\s*)?(to)?/gi, '').replace(/set\s+a?\s*reminder(\s+to)?/gi, '').trim();
-  let time = 'Tomorrow at 9:00 AM';
-  const tm = msg.match(/(?:at|@)\s*([\d:apmAMP\s]+)/i);
-  const dm = msg.match(/(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i);
-  if (tm && dm) time = `${cap(dm[1])} at ${tm[1].trim()}`;
-  else if (dm) time = `${cap(dm[1])} at 9:00 AM`;
-  else if (tm) time = `Today at ${tm[1].trim()}`;
-  const hm = msg.match(/in\s+(\d+)\s+hour/i);
-  const mm = msg.match(/in\s+(\d+)\s+min/i);
-  if (hm) time = `In ${hm[1]} hour${hm[1]>1?'s':''}`;
-  if (mm) time = `In ${mm[1]} minutes`;
-  title = title.replace(/(?:at|@)\s*[\d:apmAMP\s]+/gi, '').replace(/(today|tomorrow|monday|tuesday|wednesday|thursday|friday)/gi, '').replace(/in\s+\d+\s+\w+/gi, '').trim();
-  if (!title || title.length < 2) title = 'Reminder';
-  title = cap(title);
-  reminders.push({ id: remId++, title, time }); renderReminders(); showScreen('reminders'); toast('Reminder set! 🔔', 'ok');
-  if (hi) return { reply: `🔔 **"${title}"**\n🕐 ${time}\n\nयाद दिलाने के लिए सेट!`, tools: ['set_reminder'] };
-  return { reply: `🔔 Reminder set!\n\n**"${title}"**\n🕐 **${time}**`, tools: ['set_reminder'] };
-}
- 
-function handleCalculate(msg, hi) {
-  let result = null, expression = '', formatted = '';
-  const pct = msg.match(/([\d.]+)\s*%\s*of\s*([\d,]+)/i);
-  if (pct) { const p = parseFloat(pct[1]), b = parseFloat(pct[2].replace(',','')); result = (p/100)*b; expression = `${p}% of ${b}`; formatted = result % 1 === 0 ? result.toLocaleString('en-IN') : result.toFixed(2); }
-  if (result === null) {
-    const s = msg.replace(/[^0-9+\-*/().%^\s]/g,'').trim();
-    if (s) { try { const safe = s.replace(/\^/g,'**'); result = Function('"use strict";return (' + safe + ')')(); expression = s; formatted = typeof result==='number' ? (result%1===0 ? result.toLocaleString('en-IN') : result.toFixed(6).replace(/0+$/,'')) : String(result); } catch {} }
-  }
-  if (result === null || isNaN(result)) return { reply: hi ? 'यह हिसाब नहीं हो पाया।' : "Couldn't compute that. Try **\"18% of 4500\"** or **\"145 * 7\"**.", tools: ['calculate'] };
-  if (!formatted) formatted = result % 1 === 0 ? result.toLocaleString('en-IN') : result.toFixed(6).replace(/0+$/,'');
-  return { reply: `**${expression || 'Result'}** = **${formatted}**`, tools: ['calculate'] };
-}
- 
-function handleConvert(msg, hi) {
-  const pairs = [
-    {from:/\bkm\b/i,to:/\bmile/i,factor:0.621371,fu:'km',tu:'miles'},
-    {from:/\bmile/i,to:/\bkm\b/i,factor:1.60934,fu:'miles',tu:'km'},
-    {from:/\bkg\b/i,to:/\blb/i,factor:2.20462,fu:'kg',tu:'lbs'},
-    {from:/\blb/i,to:/\bkg\b/i,factor:0.453592,fu:'lbs',tu:'kg'},
-    {from:/\b(metre|meter)\b/i,to:/\b(feet|foot)\b/i,factor:3.28084,fu:'metres',tu:'feet'},
-    {from:/\b(feet|foot)\b/i,to:/\b(metre|meter)\b/i,factor:0.3048,fu:'feet',tu:'metres'},
-    {from:/\b(litre|liter)\b/i,to:/\bgallon\b/i,factor:0.264172,fu:'litres',tu:'gallons'},
-    {from:/\bgb\b/i,to:/\bmb\b/i,factor:1024,fu:'GB',tu:'MB'},
-    {from:/\bmb\b/i,to:/\bgb\b/i,factor:1/1024,fu:'MB',tu:'GB'},
-  ];
-  const cToF = msg.match(/([\d.]+)\s*(?:°?c|celsius)/i);
-  const fToC = msg.match(/([\d.]+)\s*(?:°?f|fahrenheit)/i);
-  if (cToF) { const c = parseFloat(cToF[1]), f = c*9/5+32; return { reply: `**${c}°C = ${f.toFixed(1)}°F**`, tools: ['convert_units'] }; }
-  if (fToC) { const f = parseFloat(fToC[1]), c = (f-32)*5/9; return { reply: `**${f}°F = ${c.toFixed(1)}°C**`, tools: ['convert_units'] }; }
-  const nm = msg.match(/([\d,]+\.?\d*)/);
-  const val = nm ? parseFloat(nm[1].replace(',','')) : 1;
-  for (const p of pairs) { if (p.from.test(msg) && p.to.test(msg)) { const r = val*p.factor; return { reply: `**${val} ${p.fu} = ${r%1===0?r.toFixed(0):r.toFixed(4).replace(/0+$/,'')} ${p.tu}**`, tools: ['convert_units'] }; } }
-  for (const p of pairs) { if (p.from.test(msg)) { const r = val*p.factor; return { reply: `**${val} ${p.fu} = ${r%1===0?r.toFixed(0):r.toFixed(4).replace(/0+$/,'')} ${p.tu}**`, tools: ['convert_units'] }; } }
-  return { reply: 'I can convert: km/miles, kg/lbs, metres/feet, litres/gallons, GB/MB, °C/°F.\n\nTry: **"100 km to miles"**', tools: ['convert_units'] };
-}
- 
-function handleWhatsNew(hi) {
-  showScreen('news');
-  const items = NEWS_DATA.slice(0, 3);
-  if (hi) return { reply: `JioJoin में नया:\n\n${items.map(n => `**${n.title}**\n${n.body}`).join('\n\n')}\n\nWhat's New टैब में सब देखें!`, tools: ['get_whats_new'] };
-  return { reply: `Here's what's new:\n\n${items.map(n => `**${n.title}**\n${n.body}`).join('\n\n')}\n\nCheck the **What's New** tab!`, tools: ['get_whats_new'] };
-}
- 
-function handleInterests(msg, hi) {
-  const map = { cricket:['cricket','ipl','sports'], cooking:['cooking','food','recipe'], fitness:['fitness','gym','exercise','workout'], finance:['finance','money','invest','stock','mutual fund'], music:['music','song'], travel:['travel','trip'], gaming:['gaming','game'] };
-  const found = [];
-  for (const [topic, keys] of Object.entries(map)) { if (keys.some(k => msg.toLowerCase().includes(k))) found.push(topic); }
-  if (!found.length) found.push('general knowledge');
-  interests = [...new Set([...interests, ...found])];
-  const recs = { cricket:'IPL schedule, match analysis, player stats', cooking:'Quick Indian recipes, healthy meals, kitchen tips', fitness:'HIIT plans, vegetarian protein diet, sleep tips', finance:'SIP guide, tax saving 80C, budgeting 50/30/20 rule', music:'Top Hindi hits, trending playlists on JioSaavn' };
-  const s = found.map(t => `• **${cap(t)}**: ${recs[t] || 'Personalised tips daily'}`).join('\n');
-  if (hi) return { reply: `रुचियाँ सेव हो गईं: **${found.join(', ')}** 🎯\n\n${s}`, tools: ['update_user_interests'] };
-  return { reply: `Saved your interests: **${found.join(', ')}** 🎯\n\n${s}\n\nAsk me to explore any of these!`, tools: ['update_user_interests'] };
-}
- 
-function handleExplore(msg, hi) {
-  const map = { cricket:['cricket'], cooking:['cooking','food'], fitness:['fitness','exercise'], finance:['finance','money','invest'], gold:['gold'], health:['health','wellness'] };
-  let found = null;
-  for (const [topic, keys] of Object.entries(map)) { if (keys.some(k => msg.toLowerCase().includes(k))) { found = topic; break; } }
-  if (!found && interests.length) found = interests[0];
-  const facts = {
-    cricket:'🏏 **Cricket Quick Facts:**\n• Sachin: only player with 100 international centuries\n• India won the World Cup in 1983, 2007 & 2011\n• IPL is the world\'s richest T20 league',
-    cooking:'🍳 **Quick Cooking Tips:**\n• Rest meat 5-10 min after cooking for juicier results\n• Salt pasta water well — should taste like the sea\n• A pinch of sugar balances acidic tomato sauce',
-    fitness:'💪 **Fitness Insights:**\n• Progressive overload is the #1 muscle-building principle\n• Sleep is when muscles actually repair and grow\n• Walking 10,000 steps/day cuts heart disease risk significantly',
-    finance:'💰 **Money Tips:**\n• 50/30/20 rule: 50% needs, 30% wants, 20% savings\n• ₹5,000/month SIP at 25 → ~₹3.5 crore by 60 (at 12%)\n• Emergency fund = 6 months of expenses',
-    gold:'📈 **Gold (general context):**\n• Global safe-haven asset — prices rise during uncertainty\n• Influenced by USD, inflation, geopolitical events\n• India demand peaks during Dhanteras & wedding season',
-  };
-  const content = facts[found] || `I'd love to tell you more about **${found || 'that topic'}**!\n\nFor live, real-time answers tap 🔑 above to add your free Groq key.`;
-  if (hi) return { reply: `${content}\n\nऔर जानना है?`, tools: ['explore_interest'] };
-  return { reply: `${content}\n\nWant to go deeper? Just ask! 😊`, tools: ['explore_interest'] };
-}
- 
-function handleGreeting(hi) {
-  if (hi) return { reply: `नमस्ते! 🙏 मैं जिओ हूँ — आपका JioJoin AI असिस्टेंट!\n\nकाम जोड़ना, याद दिलाना, हिसाब — सब कुछ! कैसे मदद करूँ?`, tools: [] };
-  return { reply: `Hello! 👋 I'm Jio, your JioJoin AI assistant.\n\nI can help with **tasks**, **reminders**, **calculations**, **unit conversions**, **what's new**, and **interests**.\n\nWhat can I do for you today?`, tools: [] };
-}
- 
-function handleHelp(hi) {
-  if (hi) return { reply: `मैं इनमें मदद करता हूँ:\n\n✅ काम — "काम जोड़ो: रिपोर्ट"\n🔔 रिमाइंडर — "कल 9 बजे याद दिलाओ"\n🧮 हिसाब — "4500 का 18%"\n📏 कन्वर्ट — "100 km को miles में"\n🆕 नया क्या है\n🎯 रुचियाँ\n\n💡 Live AI के लिए 🔑 दबाएं`, tools: [] };
-  return { reply: `Here's what I can do:\n\n✅ **Tasks** — _"Add task: Submit report by Friday"_\n🔔 **Reminders** — _"Remind me tomorrow at 9am"_\n🧮 **Calculator** — _"18% of 4500"_\n📏 **Converter** — _"100 km to miles"_\n🆕 **What's New** — _"What's new in JioJoin?"_\n🎯 **Interests** — _"I love cricket and finance"_\n🌐 **Hindi** — आप हिंदी में भी बात कर सकते हैं!\n\n💡 Tap 🔑 for full Live AI (answer anything!)`, tools: [] };
-}
- 
-function handleFallback(hi) {
-  if (hi) return { reply: `Demo mode में यह नहीं समझा।\n\n💡 Full AI के लिए ऊपर 🔑 टैप करें — free Groq key से सब कुछ पूछ सकते हैं!`, tools: [] };
-  return { reply: `I'm in Demo mode — I handle tasks, reminders, calculations, and conversions offline.\n\n💡 **For any question** (news, general knowledge, etc.) tap 🔑 above and add your free Groq API key to activate full Live AI!`, tools: [] };
-}
- 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  UTILS
-// ═══════════════════════════════════════════════════════
-function toNiceDate(str) {
-  if (!str) return null;
-  const s = str.trim().toLowerCase();
-  const d = new Date();
-  if (s === 'today') return d.toLocaleDateString('en-IN', { day:'numeric', month:'short' });
-  if (s === 'tomorrow') { d.setDate(d.getDate()+1); return d.toLocaleDateString('en-IN', { day:'numeric', month:'short' }); }
-  const days = { monday:1, tuesday:2, wednesday:3, thursday:4, friday:5, saturday:6, sunday:0 };
-  if (days[s] !== undefined) { let diff = days[s]-d.getDay(); if (diff<=0) diff+=7; d.setDate(d.getDate()+diff); return d.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short' }); }
-  return str.trim();
-}
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-function toast(msg, type='info') {
-  const tc = document.getElementById('toasts');
-  const t = document.createElement('div');
-  t.className = 'toast ' + type; t.textContent = msg;
-  tc.appendChild(t); setTimeout(() => t.remove(), 3000);
+// ═══════════════════════════════════════════════════════════════
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(msg, type='info'){
+  const tc=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className='toast '+type; t.textContent=msg;
+  tc.appendChild(t); setTimeout(()=>t.remove(),3000);
 }
 </script>
 </body>
 </html>
+ 
