@@ -181,19 +181,16 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
       <div class="topbar-name">Jio AI Assistant</div>
       <div class="topbar-sub">
         <span class="online-dot"></span>
-        <span id="mode-label">Demo mode · tap 🔑 for Live AI</span>
+        <span id="mode-label">Live AI · Llama 3.3-70b</span>
       </div>
     </div>
-    <button class="icon-btn" onclick="openKeyModal()" title="API Key">🔑</button>
-    <button class="icon-btn" onclick="newChat()" title="New chat" style="margin-left:4px">✏️</button>
+    <button class="icon-btn" onclick="newChat()" title="New chat">✏️</button>
   </div>
  
   <!-- Mode pill bar -->
   <div class="keybar">
-    <span style="font-size:11px;color:#92400E;font-weight:600">Mode:</span>
-    <span class="mode-pill demo" id="mode-pill">Demo</span>
-    <span style="flex:1;font-size:11px;color:var(--text3)" id="key-hint">Tap 🔑 above to add your Groq key for full Live AI</span>
-    <button class="go-btn" onclick="openKeyModal()" style="font-size:11px;padding:4px 10px">+ Add Key</button>
+    <span class="mode-pill live" id="mode-pill">Live AI</span>
+    <span style="flex:1;font-size:11px;color:var(--text2)" id="key-hint">🟢 Powered by Llama 3.3-70b · Groq</span>
   </div>
  
   <!-- ── CHAT ── -->
@@ -253,20 +250,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
  
 </div><!-- .shell -->
  
-<!-- API Key Modal -->
-<div class="modal-bg hidden" id="key-modal">
-  <div class="modal">
-    <h3>🔑 Add Groq API Key</h3>
-    <p>Get a <strong>free</strong> key at <strong>console.groq.com</strong> → API Keys.<br/>
-       Paste it below to unlock full AI (Llama 3.3-70b). Your key stays in this browser only.</p>
-    <input type="text" id="key-input" placeholder="Paste your Groq API key here…" autocomplete="off" autocorrect="off" spellcheck="false"/>
-    <div id="key-status" style="font-size:12px;margin-bottom:10px;min-height:16px;color:var(--text2)"></div>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeKeyModal()">Cancel</button>
-      <button class="btn-apply" id="apply-btn" onclick="applyKey()">Test &amp; Activate</button>
-    </div>
-  </div>
-</div>
  
 <div id="toasts"></div>
  
@@ -275,7 +258,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-sy
 //  STATE
 // ═══════════════════════════════════════════════════════
 let todos = [], reminders = [], interests = [], todoId = 1, remId = 1;
-let groqKey = '', chatHistory = [], busy = false;
+let groqKey = 'PASTE_YOUR_GROQ_KEY_HERE', chatHistory = [], busy = false;
  
 const GROQ_MODEL    = 'llama-3.3-70b-versatile';
 const GROQ_URL      = 'https://api.groq.com/openai/v1/chat/completions';
