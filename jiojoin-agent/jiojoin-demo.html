@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>JioJoin AI Agent</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#0050A0;--blue-lt:#0077CC;--blue-pale:#EFF6FF;--blue-dark:#003880;
+  --orange:#E8500A;--orange-lt:#FF6B2B;
+  --green:#16A34A;--green-pale:#F0FDF4;
+  --yellow:#CA8A04;--yellow-pale:#FEFCE8;
+  --red:#DC2626;--red-pale:#FEF2F2;
+  --bg:#F0F4F9;--surface:#fff;--surface2:#F7FAFD;
+  --border:#DDE4EE;--text:#1A2233;--text2:#4A5568;--text3:#8896A9;
+  --radius:16px;--radius-sm:10px;--radius-xs:6px;
+  --shadow:0 2px 12px rgba(0,80,160,.10);
+  --shadow-md:0 6px 24px rgba(0,80,160,.14);
+  --nav-h:64px;--top-h:56px;
+}
+
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text)}
+
+/* ── Full-screen mobile layout (always) ─────────────────── */
+.phone-shell{
+  width:100%;height:100%;
+  background:var(--bg);
+  border-radius:0;
+  overflow:hidden;
+  position:fixed;
+  top:0;left:0;
+  display:flex;flex-direction:column;
+}
+
+/* ── Status bar ──────────────────────────────────────────── */
+.status-bar{
+  height:44px;background:var(--blue-dark);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;flex-shrink:0;
+}
+.status-time{color:#fff;font-size:15px;font-weight:600}
+.status-icons{color:#fff;font-size:13px;display:flex;gap:6px;align-items:center}
+
+/* ── Top App Bar ─────────────────────────────────────────── */
+.topbar{
+  height:var(--top-h);background:var(--blue);
+  display:flex;align-items:center;padding:0 16px;gap:12px;
+  flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,80,.25);
+  position:relative;z-index:10;
+}
+.topbar-av{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-lt),#60A5FA);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.topbar-info{flex:1;min-width:0}
+.topbar-name{color:#fff;font-size:15px;font-weight:700;line-height:1.2}
+.topbar-sub{color:rgba(255,255,255,.65);font-size:11px;display:flex;align-items:center;gap:4px}
+.online-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80}
+.topbar-actions{display:flex;gap:8px}
+.icon-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.15);border:none;color:#fff;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.icon-btn:hover{background:rgba(255,255,255,.25)}
+
+/* ── API Key bar ─────────────────────────────────────────── */
+.apikey-bar{
+  background:#FFFBEB;border-bottom:1px solid #FDE68A;
+  padding:8px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+.apikey-bar label{font-size:11px;font-weight:700;color:#92400E;white-space:nowrap}
+.apikey-bar input{
+  flex:1;padding:5px 8px;border:1.5px solid #FCD34D;border-radius:var(--radius-xs);
+  font-size:11px;outline:none;color:var(--text);font-family:monospace;background:#fff;
+  min-width:0;
+}
+.apikey-bar input:focus{border-color:#F59E0B}
+.apikey-bar .ak-btn{
+  padding:5px 10px;background:#D97706;color:#fff;border:none;
+  border-radius:var(--radius-xs);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;
+}
+.mode-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.mode-pill.live{background:#D1FAE5;color:#065F46}
+.mode-pill.demo{background:#FEF3C7;color:#92400E}
+
+/* ── Screens ─────────────────────────────────────────────── */
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
+.screen.active{display:flex}
+
+/* ── Chat screen ─────────────────────────────────────────── */
+.messages{
+  flex:1;overflow-y:auto;padding:14px 12px;
+  display:flex;flex-direction:column;gap:12px;
+  -webkit-overflow-scrolling:touch;
+}
+/* Welcome card */
+.welcome{
+  background:var(--surface);border-radius:var(--radius);
+  padding:20px 16px;text-align:center;box-shadow:var(--shadow);margin:4px 0;
+}
+.jio-av-big{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--blue-lt));
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin:0 auto 10px;
+  box-shadow:0 4px 14px rgba(0,119,204,.3);
+}
+.welcome h3{font-size:15px;font-weight:700;margin-bottom:5px;color:var(--text)}
+.welcome p{font-size:12px;color:var(--text2);line-height:1.5}
+.quick-grid{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.qp{
+  padding:6px 11px;background:var(--blue-pale);
+  border:1.5px solid #BFDBFE;border-radius:20px;
+  font-size:11px;color:var(--blue);cursor:pointer;
+  transition:all .2s;font-weight:500;
+  -webkit-tap-highlight-color:transparent;
+}
+.qp:active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* Bubbles */
+.msg-row{display:flex;gap:8px;align-items:flex-end;max-width:88%}
+.msg-row.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-row.bot{align-self:flex-start}
+.msg-av{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+}
+.msg-av.b{background:linear-gradient(135deg,var(--blue),var(--blue-lt));color:#fff}
+.msg-av.u{background:var(--orange);color:#fff}
+.msg-meta{display:flex;flex-direction:column;gap:4px}
+.bubble{
+  padding:10px 13px;border-radius:18px;
+  font-size:13.5px;line-height:1.55;word-break:break-word;
+  box-shadow:var(--shadow);
+}
+.bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.bubble.bot{background:var(--surface);color:var(--text);border-bottom-left-radius:4px}
+.bubble.bot strong{color:var(--blue-dark)}
+.tools-row{display:flex;flex-wrap:wrap;gap:4px}
+.tool-tag{
+  font-size:10px;padding:2px 7px;border-radius:8px;
+  background:var(--green-pale);color:var(--green);
+  font-weight:600;border:1px solid #BBF7D0;
+}
+.tool-tag::before{content:'⚡ '}
+
+/* Typing indicator */
+.typing-bubble{
+  display:flex;align-items:center;gap:4px;
+  padding:10px 14px;background:var(--surface);
+  border-radius:18px;border-bottom-left-radius:4px;box-shadow:var(--shadow);
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--blue-lt);animation:bop 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes bop{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-6px);opacity:1}}
+
+/* Input bar */
+.input-wrap{
+  padding:10px 12px;background:var(--surface);
+  border-top:1px solid var(--border);flex-shrink:0;
+  padding-bottom:max(10px, env(safe-area-inset-bottom));
+}
+.input-row{
+  display:flex;gap:8px;align-items:flex-end;
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:24px;padding:6px 6px 6px 14px;
+  transition:border-color .2s;
+}
+.input-row:focus-within{border-color:var(--blue)}
+#inp{
+  flex:1;border:none;background:transparent;font-size:14px;
+  color:var(--text);resize:none;outline:none;
+  max-height:80px;min-height:22px;line-height:1.5;font-family:inherit;
+}
+#inp::placeholder{color:var(--text3)}
+.send-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--blue-lt));
+  border:none;color:#fff;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:transform .15s,opacity .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.send-btn:active{transform:scale(.92)}
+.send-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ── Tasks screen ────────────────────────────────────────── */
+.screen-header{
+  padding:14px 16px 10px;background:var(--surface);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.screen-title{font-size:18px;font-weight:800;color:var(--text)}
+.screen-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.list-body{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}
+
+.todo-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:12px 14px;margin-bottom:10px;
+  box-shadow:var(--shadow);
+  border-left:4px solid var(--border);
+  display:flex;align-items:flex-start;gap:12px;
+  cursor:pointer;transition:box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.todo-card:active{box-shadow:var(--shadow-md)}
+.todo-card.high{border-left-color:var(--red)}
+.todo-card.medium{border-left-color:var(--yellow)}
+.todo-card.low{border-left-color:var(--green)}
+.todo-card.done{opacity:.5}
+.chk{
+  width:22px;height:22px;border-radius:50%;border:2px solid var(--border);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:11px;transition:all .2s;margin-top:1px;
+}
+.chk.ticked{background:var(--green);border-color:var(--green);color:#fff}
+.todo-body{flex:1;min-width:0}
+.todo-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px}
+.todo-title.done{text-decoration:line-through;color:var(--text3)}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
+.chip.ph{background:var(--red-pale);color:var(--red)}
+.chip.pm{background:var(--yellow-pale);color:var(--yellow)}
+.chip.pl{background:var(--green-pale);color:var(--green)}
+.chip.st{background:var(--blue-pale);color:var(--blue)}
+.chip.due{background:#F5F3FF;color:#7C3AED}
+
+/* Reminder card */
+.rem-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:14px;margin-bottom:10px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:12px;
+}
+.rem-icon-wrap{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,#FEF3C7,#FDE68A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.rem-body{flex:1;min-width:0}
+.rem-title{font-size:14px;font-weight:600;color:var(--text)}
+.rem-time{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* News card */
+.news-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:14px;margin-bottom:10px;box-shadow:var(--shadow);
+  border-top:3px solid var(--blue-lt);
+}
+.news-cat{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--blue);margin-bottom:4px;
+}
+.news-title{font-size:14px;font-weight:700;margin-bottom:5px;color:var(--text)}
+.news-body{font-size:12px;color:var(--text2);line-height:1.55}
+
+/* Empty state */
+.empty{text-align:center;padding:50px 20px;color:var(--text3)}
+.empty-icon{font-size:44px;margin-bottom:10px}
+.empty-msg{font-size:13px;line-height:1.5}
+
+/* ── Bottom Nav ──────────────────────────────────────────── */
+.bottom-nav{
+  height:var(--nav-h);background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex;align-items:stretch;
+  flex-shrink:0;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -2px 10px rgba(0,0,0,.06);
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:4px;border:none;background:transparent;
+  cursor:pointer;color:var(--text3);font-size:10px;font-weight:600;
+  transition:color .2s;padding:0;letter-spacing:.2px;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-btn .nav-icon{font-size:22px;line-height:1}
+.nav-btn.active{color:var(--blue)}
+.nav-btn .badge{
+  position:absolute;top:-2px;right:-4px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--red);color:#fff;font-size:9px;
+  font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+.nav-icon-wrap{position:relative;display:inline-block}
+
+/* ── Toast ───────────────────────────────────────────────── */
+#toasts{
+  position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:999;display:flex;flex-direction:column;gap:6px;width:90%;
+}
+.toast{
+  padding:10px 16px;border-radius:10px;font-size:12px;font-weight:600;
+  color:#fff;box-shadow:var(--shadow-md);animation:tin .25s ease;
+  text-align:center;
+}
+.toast.ok{background:var(--green)}
+.toast.err{background:var(--red)}
+.toast.info{background:var(--blue)}
+@keyframes tin{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px}
+</style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="status-time" id="clock">9:41</span>
+    <div class="status-icons">
+      <span>●●●</span><span>WiFi</span><span>🔋</span>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-av">🤖</div>
+    <div class="topbar-info">
+      <div class="topbar-name">Jio AI Assistant</div>
+      <div class="topbar-sub">
+        <span class="online-dot"></span>
+        <span id="mode-label">Demo mode — add Groq key for full AI</span>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="newChat()" title="New chat">✏️</button>
+    </div>
+  </div>
+
+  <!-- API Key bar -->
+  <div class="apikey-bar">
+    <label>🔑</label>
+    <input type="password" id="groq-key" placeholder="Paste Groq API key for live AI (console.groq.com)"/>
+    <button class="ak-btn" onclick="applyKey()">Go</button>
+    <span class="mode-pill demo" id="mode-pill">Demo</span>
+  </div>
+
+  <!-- ── CHAT SCREEN ── -->
+  <div class="screen active" id="screen-chat">
+    <div class="messages" id="msgs"></div>
+    <div class="input-wrap">
+      <div class="input-row">
+        <textarea id="inp" rows="1"
+          placeholder="Ask Jio anything…"
+          onkeydown="onKey(event)"
+          oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="send()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TASKS SCREEN ── -->
+  <div class="screen" id="screen-tasks">
+    <div class="screen-header">
+      <div class="screen-title">My Tasks</div>
+      <div class="screen-sub" id="tasks-sub">No pending tasks</div>
+    </div>
+    <div class="list-body" id="todo-list"></div>
+  </div>
+
+  <!-- ── REMINDERS SCREEN ── -->
+  <div class="screen" id="screen-reminders">
+    <div class="screen-header">
+      <div class="screen-title">Reminders</div>
+      <div class="screen-sub" id="rem-sub">No active reminders</div>
+    </div>
+    <div class="list-body" id="rem-list"></div>
+  </div>
+
+  <!-- ── WHAT'S NEW SCREEN ── -->
+  <div class="screen" id="screen-news">
+    <div class="screen-header">
+      <div class="screen-title">What's New</div>
+      <div class="screen-sub">Latest JioJoin updates &amp; features</div>
+    </div>
+    <div class="list-body" id="news-list"></div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-chat" onclick="showScreen('chat')">
+      <div class="nav-icon-wrap"><span class="nav-icon">💬</span></div>
+      <span>Chat</span>
+    </button>
+    <button class="nav-btn" id="nav-tasks" onclick="showScreen('tasks')">
+      <div class="nav-icon-wrap">
+        <span class="nav-icon">✅</span>
+        <span class="badge" id="task-badge" style="display:none">0</span>
+      </div>
+      <span>Tasks</span>
+    </button>
+    <button class="nav-btn" id="nav-reminders" onclick="showScreen('reminders')">
+      <div class="nav-icon-wrap">
+        <span class="nav-icon">🔔</span>
+        <span class="badge" id="rem-badge" style="display:none">0</span>
+      </div>
+      <span>Reminders</span>
+    </button>
+    <button class="nav-btn" id="nav-news" onclick="showScreen('news')">
+      <div class="nav-icon-wrap"><span class="nav-icon">🆕</span></div>
+      <span>What's New</span>
+    </button>
+  </div>
+
+  <div id="toasts"></div>
+</div><!-- .phone-shell -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let todos     = [];
+let reminders = [];
+let interests = [];
+let busy      = false;
+let todoId    = 1;
+let remId     = 1;
+let groqKey   = '';
+let chatHistory = [];   // Groq-format message list for live mode
+
+const GROQ_MODEL    = 'llama-3.3-70b-versatile';
+const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+
+const SYSTEM_PROMPT = `You are Jio, a friendly and intelligent personal AI assistant built into the JioJoin mobile app.
+
+You help users with:
+1. To-Do List — add, view, update, complete, delete tasks
+2. Utility — calculations, unit conversions, reminders
+3. What's New — latest JioJoin features and announcements
+4. Explore Interests — personalised content based on user interests
+5. General questions — you can answer ANY question the user asks
+
+Guidelines:
+- Be concise, warm, and conversational. This is a mobile app — keep responses short and punchy.
+- Respond in the same language the user writes in (English or Hindi).
+- For task/reminder actions, confirm what you did clearly.
+- You CAN answer general knowledge, current events, advice — anything. Never say you can't help.
+- Use bullet points sparingly. Prefer short paragraphs on mobile.
+आप हिंदी में भी उतनी ही कुशलता से जवाब दे सकते हैं।`;
+
+// Groq tool definitions (mirrors the production backend)
+const GROQ_TOOLS = [
+  {type:'function',function:{name:'add_todo',description:'Create a new to-do task for the user.',parameters:{type:'object',properties:{title:{type:'string',description:'Task title'},priority:{type:'string',enum:['low','medium','high']},due_date:{type:'string',description:'Due date string'}},required:['title']}}},
+  {type:'function',function:{name:'list_todos',description:"List the user's tasks.",parameters:{type:'object',properties:{status:{type:'string',enum:['pending','in_progress','completed']}},required:[]}}},
+  {type:'function',function:{name:'update_todo',description:'Update a task status.',parameters:{type:'object',properties:{todo_id:{type:'string'},status:{type:'string',enum:['pending','in_progress','completed']}},required:['todo_id','status']}}},
+  {type:'function',function:{name:'delete_todo',description:'Delete a task.',parameters:{type:'object',properties:{todo_id:{type:'string'}},required:['todo_id']}}},
+  {type:'function',function:{name:'set_reminder',description:'Set a reminder.',parameters:{type:'object',properties:{title:{type:'string'},remind_at:{type:'string'}},required:['title','remind_at']}}},
+  {type:'function',function:{name:'list_reminders',description:'List active reminders.',parameters:{type:'object',properties:{},required:[]}}},
+  {type:'function',function:{name:'get_whats_new',description:'Show latest JioJoin announcements.',parameters:{type:'object',properties:{},required:[]}}},
+  {type:'function',function:{name:'update_user_interests',description:'Save user interest topics.',parameters:{type:'object',properties:{topics:{type:'array',items:{type:'string'}}},required:['topics']}}},
+  {type:'function',function:{name:'explore_interest',description:'Get content about a topic of interest.',parameters:{type:'object',properties:{topic:{type:'string'}},required:[]}}},
+];
+
+const NEWS_DATA = [
+  {cat:'Feature',title:'Welcome to JioJoin AI! 🎉',body:'Your personal assistant is here. Manage tasks, set reminders, calculate anything, and discover new interests — all in one chat.'},
+  {cat:'Feature',title:'Hindi Support is Live!',body:'आप अब हिंदी में बात कर सकते हैं! The agent responds in the language you write in.'},
+  {cat:'Feature',title:'Smart To-Do Tracking',body:'Set priorities (high/medium/low), due dates, and tags. Just describe your task naturally and Jio handles the rest.'},
+  {cat:'Tip',title:'Explore Your Interests',body:"Tell Jio what you're curious about — cricket, cooking, finance, fitness — and get personalised content every day."},
+  {cat:'Coming Soon',title:'JioJoin Premium',body:'Advanced scheduling, team task sharing, and priority AI support. Coming soon for JioJoin Premium users.'},
+];
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+window.onload = () => {
+  updateClock();
+  setInterval(updateClock, 30000);
+  renderNews();
+  renderWelcome();
+  document.getElementById('inp').focus();
+};
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}).replace(' ','');
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════
+//  API KEY
+// ═══════════════════════════════════════════════════════
+function applyKey() {
+  const key = document.getElementById('groq-key').value.trim();
+  if (!key.startsWith('gsk_')) {
+    toast('Key should start with gsk_', 'err'); return;
+  }
+  groqKey = key;
+  chatHistory = [];
+  document.getElementById('mode-pill').className = 'mode-pill live';
+  document.getElementById('mode-pill').textContent = 'Live AI';
+  document.getElementById('mode-label').textContent = 'Live AI · Llama 3.3-70b';
+  toast('✅ Live AI mode activated!', 'ok');
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER — SIDEBAR PANELS
+// ═══════════════════════════════════════════════════════
+function renderTodos() {
+  const el = document.getElementById('todo-list');
+  const pending = todos.filter(t=>t.status!=='completed').length;
+  document.getElementById('tasks-sub').textContent =
+    todos.length ? `${pending} pending · ${todos.length-pending} completed` : 'No tasks yet';
+  const badge = document.getElementById('task-badge');
+  if (pending > 0) { badge.style.display='flex'; badge.textContent=pending; }
+  else badge.style.display='none';
+
+  if (!todos.length) {
+    el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No tasks yet.<br/>Go to Chat and ask Jio to add one!</div></div>';
+    return;
+  }
+  el.innerHTML = todos.slice().reverse().map(t=>`
+    <div class="todo-card ${t.priority} ${t.status==='completed'?'done':''}" onclick="toggleTodo(${t.id})">
+      <div class="chk ${t.status==='completed'?'ticked':''}">${t.status==='completed'?'✓':''}</div>
+      <div class="todo-body">
+        <div class="todo-title ${t.status==='completed'?'done':''}">${esc(t.title)}</div>
+        <div class="chips">
+          <span class="chip p${t.priority[0]}">${t.priority}</span>
+          <span class="chip st">${t.status.replace('_',' ')}</span>
+          ${t.due?`<span class="chip due">📅 ${t.due}</span>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderReminders() {
+  const el = document.getElementById('rem-list');
+  const count = reminders.length;
+  document.getElementById('rem-sub').textContent = count ? `${count} active reminder${count>1?'s':''}` : 'No active reminders';
+  const badge = document.getElementById('rem-badge');
+  if (count > 0) { badge.style.display='flex'; badge.textContent=count; }
+  else badge.style.display='none';
+
+  if (!reminders.length) {
+    el.innerHTML='<div class="empty"><div class="empty-icon">🔔</div><div class="empty-msg">No reminders yet.<br/>Ask Jio to set one!</div></div>';
+    return;
+  }
+  el.innerHTML = reminders.map(r=>`
+    <div class="rem-card">
+      <div class="rem-icon-wrap">🔔</div>
+      <div class="rem-body">
+        <div class="rem-title">${esc(r.title)}</div>
+        <div class="rem-time">${esc(r.time)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderNews() {
+  document.getElementById('news-list').innerHTML = NEWS_DATA.map(n=>`
+    <div class="news-card">
+      <div class="news-cat">${n.cat}</div>
+      <div class="news-title">${n.title}</div>
+      <div class="news-body">${n.body}</div>
+    </div>`).join('');
+}
+
+function toggleTodo(id) {
+  const t = todos.find(x=>x.id===id);
+  if (!t) return;
+  t.status = t.status==='completed'?'pending':'completed';
+  renderTodos();
+  toast(t.status==='completed'?'Task completed! ✅':'Task reopened','ok');
+}
+
+// ═══════════════════════════════════════════════════════
+//  CHAT UI
+// ═══════════════════════════════════════════════════════
+function renderWelcome() {
+  document.getElementById('msgs').innerHTML = `
+    <div class="welcome">
+      <div class="jio-av-big">🤖</div>
+      <h3>Namaste! I'm Jio 👋</h3>
+      <p>Your personal AI assistant inside JioJoin.<br/>
+         I can manage tasks, set reminders, calculate,<br/>
+         convert units, answer questions, and more!<br/>
+         <strong>आप हिंदी में भी बात कर सकते हैं!</strong></p>
+      <div class="quick-grid">
+        <span class="qp" onclick="quickSend(this)">Add task: Review Q2 report by Friday</span>
+        <span class="qp" onclick="quickSend(this)">What is 18% of 4500?</span>
+        <span class="qp" onclick="quickSend(this)">Remind me to call doctor tomorrow at 9am</span>
+        <span class="qp" onclick="quickSend(this)">What's new in JioJoin?</span>
+        <span class="qp" onclick="quickSend(this)">Convert 100 km to miles</span>
+        <span class="qp" onclick="quickSend(this)">I love cricket and personal finance</span>
+        <span class="qp" onclick="quickSend(this)">What's happening with gold prices?</span>
+        <span class="qp" onclick="quickSend(this)">मेरे सभी काम दिखाओ</span>
+      </div>
+    </div>`;
+}
+
+function newChat() {
+  todos=[]; reminders=[]; interests=[]; todoId=1; remId=1;
+  chatHistory=[];
+  renderTodos(); renderReminders();
+  renderWelcome();
+  showScreen('chat');
+  toast('New session started','info');
+}
+
+function onKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; }
+function quickSend(el){ sendText(el.textContent.trim()); }
+
+function send() {
+  const el=document.getElementById('inp');
+  const txt=el.value.trim();
+  if(!txt||busy) return;
+  el.value=''; el.style.height='auto';
+  sendText(txt);
+}
+
+async function sendText(txt) {
+  if(busy) return;
+  addBubble('user',txt);
+  showTyping();
+  busy=true;
+  document.getElementById('send-btn').disabled=true;
+
+  let reply='', tools=[];
+  try {
+    if (groqKey) {
+      ({reply,tools} = await callGroqLive(txt));
+    } else {
+      await sleep(700+Math.random()*600);
+      ({reply,tools} = agentRespond(txt));
+    }
+  } catch(e) {
+    reply = `Sorry, something went wrong: ${e.message}`;
+    toast(e.message,'err');
+  }
+
+  hideTyping();
+  addBubble('bot', reply, tools);
+  busy=false;
+  document.getElementById('send-btn').disabled=false;
+  document.getElementById('inp').focus();
+}
+
+let typingEl=null;
+function showTyping(){
+  const msgs=document.getElementById('msgs');
+  typingEl=document.createElement('div');
+  typingEl.className='msg-row bot';
+  typingEl.innerHTML='<div class="msg-av b">🤖</div><div class="msg-meta"><div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  msgs.appendChild(typingEl);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping(){ if(typingEl){typingEl.remove();typingEl=null;} }
+
+function addBubble(role,text,tools=[]) {
+  const msgs=document.getElementById('msgs');
+  const row=document.createElement('div');
+  row.className=`msg-row ${role}`;
+  const av=document.createElement('div');
+  av.className=`msg-av ${role==='user'?'u':'b'}`;
+  av.textContent=role==='user'?'S':'🤖';
+  const meta=document.createElement('div');
+  meta.className='msg-meta';
+  const bubble=document.createElement('div');
+  bubble.className=`bubble ${role}`;
+  bubble.innerHTML=fmtText(text);
+  meta.appendChild(bubble);
+  if(role==='bot'&&tools.length){
+    const tr=document.createElement('div');
+    tr.className='tools-row';
+    tools.forEach(t=>{const s=document.createElement('span');s.className='tool-tag';s.textContent=t.replace(/_/g,' ');tr.appendChild(s);});
+    meta.appendChild(tr);
+  }
+  row.appendChild(av);
+  row.appendChild(meta);
+  msgs.appendChild(row);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function fmtText(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/__(.*?)__/g,'<em>$1</em>')
+    .replace(/`(.*?)`/g,'<code style="background:#F3F4F6;padding:1px 4px;border-radius:4px;font-size:12px">$1</code>')
+    .replace(/\n/g,'<br/>');
+}
+
+// ═══════════════════════════════════════════════════════
+//  LIVE GROQ MODE — real LLM + tool-calling loop
+// ═══════════════════════════════════════════════════════
+async function callGroqLive(userMsg) {
+  chatHistory.push({role:'user',content:userMsg});
+  const messages = [{role:'system',content:SYSTEM_PROMPT},...chatHistory];
+  const toolsUsed = [];
+  const MAX_ROUNDS = 5;
+
+  for (let round=0; round<MAX_ROUNDS; round++) {
+    const res = await fetch(GROQ_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
+      body:JSON.stringify({
+        model:GROQ_MODEL,
+        messages,
+        tools:GROQ_TOOLS,
+        tool_choice:'auto',
+        temperature:0.65,
+        max_tokens:1024,
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({error:{message:res.statusText}}));
+      throw new Error(err?.error?.message || 'Groq API error');
+    }
+    const data = await res.json();
+    const choice = data.choices[0];
+    const msg = choice.message;
+
+    // No tool calls → final answer
+    if (!msg.tool_calls || msg.tool_calls.length===0) {
+      const reply = msg.content || '';
+      chatHistory.push({role:'assistant',content:reply});
+      return {reply, tools:toolsUsed};
+    }
+
+    // Append assistant turn with tool_calls
+    messages.push({role:'assistant',content:msg.content||'',tool_calls:msg.tool_calls});
+
+    // Execute each tool call
+    for (const tc of msg.tool_calls) {
+      const name = tc.function.name;
+      let args = {};
+      try{ args=JSON.parse(tc.function.arguments); }catch{}
+      toolsUsed.push(name);
+      const result = await dispatchTool(name,args);
+      messages.push({role:'tool',tool_call_id:tc.id,name,content:JSON.stringify(result)});
+    }
+  }
+  return {reply:'I ran into a loop. Please try rephrasing your request.', tools:toolsUsed};
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOOL DISPATCHER  (shared by live + demo modes)
+// ═══════════════════════════════════════════════════════
+async function dispatchTool(name,args) {
+  switch(name){
+    case 'add_todo':{
+      const id=todoId++;
+      const priority=args.priority||'medium';
+      const due=args.due_date?toNiceDate(args.due_date):null;
+      todos.push({id,title:args.title,priority,status:'pending',due});
+      renderTodos();
+      showScreen('tasks');
+      toast('Task added! ✅','ok');
+      return {success:true,todo:{id,title:args.title,priority,status:'pending',due_date:due}};
+    }
+    case 'list_todos':{
+      const filtered=args.status?todos.filter(t=>t.status===args.status):todos;
+      return {todos:filtered.map(t=>({id:t.id,title:t.title,priority:t.priority,status:t.status,due_date:t.due}))};
+    }
+    case 'update_todo':{
+      const t=todos.find(x=>String(x.id)===String(args.todo_id));
+      if(!t) return {success:false,error:'Task not found'};
+      if(args.status) t.status=args.status;
+      renderTodos();
+      toast(args.status==='completed'?'Task completed! 🎉':'Task updated','ok');
+      return {success:true,todo:{id:t.id,title:t.title,status:t.status}};
+    }
+    case 'delete_todo':{
+      const idx=todos.findIndex(x=>String(x.id)===String(args.todo_id));
+      if(idx===-1) return {success:false,error:'Task not found'};
+      const removed=todos.splice(idx,1)[0];
+      renderTodos();
+      return {success:true,message:`Deleted "${removed.title}"`};
+    }
+    case 'set_reminder':{
+      const id=remId++;
+      const time=args.remind_at||'Tomorrow';
+      reminders.push({id,title:args.title,time});
+      renderReminders();
+      showScreen('reminders');
+      toast('Reminder set! 🔔','ok');
+      return {success:true,reminder:{id,title:args.title,remind_at:time}};
+    }
+    case 'list_reminders':
+      return {reminders:reminders.map(r=>({id:r.id,title:r.title,remind_at:r.time}))};
+    case 'get_whats_new':
+      showScreen('news');
+      return {announcements:NEWS_DATA};
+    case 'update_user_interests':
+      interests=[...new Set([...interests,...(args.topics||[])])];
+      return {success:true,interests};
+    case 'explore_interest':
+      return {topic:args.topic||'general',interests,instruction:`Tell the user about "${args.topic||interests[0]||'something interesting'}" in a friendly, engaging way.`};
+    default:
+      return {error:`Unknown tool: ${name}`};
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  DEMO MODE — rule-based agent (no API key needed)
+// ═══════════════════════════════════════════════════════
+function agentRespond(msg) {
+  const m=msg.toLowerCase().trim();
+  const hi=/[ऀ-ॿ]/.test(msg);
+
+  // To-Do: add
+  if((/\b(add|create|make|नया काम|जोड़)\b/.test(m)&&/\b(task|todo|काम|work)\b/.test(m))||/^(add task:|add a task:|create task:)/i.test(msg))
+    return handleAddTodo(msg,hi);
+
+  // To-Do: list
+  if((/\b(show|list|see|view|दिखाओ|pending|my task)\b/.test(m)&&/\b(task|todo|काम|pending)\b/.test(m))||m==='मेरे सभी काम दिखाओ')
+    return handleListTodos(hi);
+
+  // To-Do: complete
+  if(/\b(complete|done|finish|mark|पूरा|completed)\b/.test(m)&&!/\b(task|todo)\b.*\b(complete|done)\b/.test(m+'x'))
+    return handleCompleteTodo(msg,hi);
+
+  // To-Do: delete
+  if(/\b(delete|remove|हटाओ)\b/.test(m)&&/\b(task|todo|काम)\b/.test(m))
+    return handleDeleteTodo(msg,hi);
+
+  // Reminder
+  if(/\b(remind|reminder|याद दिलाओ|set alarm)\b/.test(m))
+    return handleSetReminder(msg,hi);
+
+  // What's New — MUST come before unit converter
+  if(/what'?s new|new feature|new update|new in jiojoin|announcement|नया क्या|अपडेट/.test(m)||/\bnews\b/.test(m))
+    return handleWhatsNew(hi);
+
+  // Calculator — "what is X" only if followed by a digit/operator
+  if((/\bwhat is\b/.test(m)&&/[\d%+\-*/]/.test(m))||
+     /\b(calculat|compute|how much is|percent|plus|minus|×|÷|sqrt|power|गणना|हिसाब|कितना)\b/.test(m)||
+     /[\d]\s*[+\-*/^%]\s*[\d]/.test(m)||/\d+%\s*of\s*\d+/i.test(m))
+    return handleCalculate(msg,hi);
+
+  // Unit converter — needs a number + unit keyword, or "convert"
+  if(/\bconvert\b/.test(m)||(/\d/.test(m)&&/\b(miles|km|kilometres|kilogram|pound|celsius|fahrenheit|litre|liter|gallon|kg|lbs|lb|feet|foot|meter|metre|mb|gb|tb)\b/.test(m)))
+    return handleConvert(msg,hi);
+
+  // Interests
+  if(/\b(interest|love|like|enjoy|hobby|passion|cricket|cooking|fitness|finance|music|travel|gaming|curious|पसंद|शौक)\b/.test(m))
+    return handleInterests(msg,hi);
+
+  // Explore / general knowledge
+  if(/\b(tell me about|explore|discover|learn|facts|tips about|what.s happening|latest on|what about)\b/.test(m))
+    return handleExplore(msg,hi);
+
+  // Greeting
+  if(/^(hi|hello|hey|namaste|नमस्ते|हैलो|good morning|good evening|हाय)\b/.test(m))
+    return handleGreeting(hi);
+
+  // Help
+  if(/\b(help|what can you|capabilities|features|मदद)\b/.test(m))
+    return handleHelp(hi);
+
+  // Fallback
+  return handleFallback(hi);
+}
+
+// ── Demo handlers ─────────────────────────────────────
+
+function handleAddTodo(msg,hi){
+  let title=msg.replace(/^(add|create|make|please|can you|add task:|add a task:|create task:|जोड़ो|नया काम)/gi,'')
+               .replace(/\b(task|todo|to-do|काम)\b/gi,'').trim();
+  let priority='medium';
+  if(/\bhigh\b|\burgent\b|\bimportant\b|\bजरूरी\b/.test(msg.toLowerCase()))priority='high';
+  if(/\blow\b|\blater\b/.test(msg.toLowerCase()))priority='low';
+  let due=null;
+  const duem=msg.match(/by\s+([\w\s]+?)(?:,|$|\.)/i)||msg.match(/(monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|tomorrow)/i);
+  if(duem)due=toNiceDate((duem[1]||duem[0]).trim());
+  title=title.replace(/[:,]\s*(high|medium|low|urgent)\s*(priority)?/gi,'').replace(/by\s+\w+day/gi,'').replace(/by\s+(today|tomorrow)/gi,'').trim();
+  if(!title||title.length<2)title='New task';
+  title=capitalise(title);
+  const id=todoId++;
+  todos.push({id,title,priority,status:'pending',due});
+  renderTodos();
+  showScreen('tasks');
+  toast('Task added! ✅','ok');
+  if(hi)return{reply:`ठीक है! आपका काम जोड़ा:\n\n**"${title}"**\nप्राथमिकता: ${priority}${due?`\nतारीख: ${due}`:''}`,tools:['add_todo']};
+  return{reply:`Done! Added **"${title}"** with ${priority} priority${due?`, due ${due}`:''}. ✅\n\nSee it in the Tasks tab!`,tools:['add_todo']};
+}
+
+function handleListTodos(hi){
+  if(!todos.length)return{reply:hi?'अभी कोई काम नहीं है।':"No tasks yet! Say **\"Add task: Buy groceries\"** to get started.",tools:['list_todos']};
+  const pending=todos.filter(t=>t.status!=='completed');
+  const done=todos.filter(t=>t.status==='completed');
+  let lines='';
+  if(pending.length)lines+=`**Pending (${pending.length}):**\n`+pending.map((t,i)=>`${i+1}. ${t.title} · _${t.priority}_${t.due?` · ${t.due}`:''}`).join('\n');
+  if(done.length)lines+=`\n\n**Done (${done.length}):**\n`+done.map(t=>`✓ ${t.title}`).join('\n');
+  if(hi)return{reply:`आपके काम:\n\n${pending.map((t,i)=>`${i+1}. ${t.title} (${t.priority})`).join('\n')}`,tools:['list_todos']};
+  return{reply:`Here are your tasks:\n\n${lines}`,tools:['list_todos']};
+}
+
+function handleCompleteTodo(msg,hi){
+  const pending=todos.filter(t=>t.status!=='completed');
+  if(!pending.length)return{reply:hi?'सभी काम पूरे हो गए! 🎉':'All tasks are already done! 🎉',tools:['update_todo']};
+  const words=msg.toLowerCase().replace(/\b(mark|complete|done|finish|task|as|the)\b/g,'').trim().split(/\s+/).filter(w=>w.length>2);
+  let matched=pending.find(t=>words.some(w=>t.title.toLowerCase().includes(w)))||pending[pending.length-1];
+  matched.status='completed';
+  renderTodos();
+  toast('Task completed! 🎉','ok');
+  if(hi)return{reply:`"${matched.title}" पूरा! 🎉`,tools:['update_todo']};
+  return{reply:`**"${matched.title}"** marked as completed. ✅ Great work! 💪`,tools:['update_todo']};
+}
+
+function handleDeleteTodo(msg,hi){
+  if(!todos.length)return{reply:'No tasks to delete.',tools:['delete_todo']};
+  const last=todos[todos.length-1];
+  todos=todos.filter(t=>t.id!==last.id);
+  renderTodos();
+  if(hi)return{reply:`"${last.title}" हटा दिया।`,tools:['delete_todo']};
+  return{reply:`**"${last.title}"** deleted.`,tools:['delete_todo']};
+}
+
+function handleSetReminder(msg,hi){
+  let title=msg.replace(/remind(er)?\s*(me\s*)?(to)?/gi,'').replace(/set\s+a?\s*reminder(\s+to)?/gi,'').trim();
+  let time='Tomorrow at 9:00 AM';
+  const tm=msg.match(/(?:at|@)\s*([\d:apmAMP\s]+)/i);
+  const dm=msg.match(/(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}[\/\-]\d{1,2})/i);
+  if(tm&&dm)time=`${capitalise(dm[1])} at ${tm[1].trim()}`;
+  else if(dm)time=`${capitalise(dm[1])} at 9:00 AM`;
+  else if(tm)time=`Today at ${tm[1].trim()}`;
+  else if(/in\s+(\d+)\s+hour/i.test(msg)){const h=msg.match(/in\s+(\d+)\s+hour/i)[1];time=`In ${h} hour${h>1?'s':''}`;}
+  else if(/in\s+(\d+)\s+min/i.test(msg)){const mn=msg.match(/in\s+(\d+)\s+min/i)[1];time=`In ${mn} minutes`;}
+  title=title.replace(/(?:at|@)\s*[\d:apmAMP\s]+/gi,'').replace(/(today|tomorrow|monday|tuesday|wednesday|thursday|friday)/gi,'').replace(/in\s+\d+\s+(?:hour|min)\w*/gi,'').trim();
+  if(!title||title.length<2)title='Reminder';
+  title=capitalise(title);
+  reminders.push({id:remId++,title,time});
+  renderReminders();
+  showScreen('reminders');
+  toast('Reminder set! 🔔','ok');
+  if(hi)return{reply:`🔔 **"${title}"**\n🕐 ${time}\n\nयाद दिलाने के लिए सेट हो गया!`,tools:['set_reminder']};
+  return{reply:`🔔 Reminder set!\n\n**"${title}"**\n🕐 **${time}**`,tools:['set_reminder']};
+}
+
+function handleCalculate(msg,hi){
+  let result=null,expression='',formatted='';
+  const pctOf=msg.match(/([\d.]+)\s*%\s*of\s*([\d,]+)/i);
+  if(pctOf){const pct=parseFloat(pctOf[1]),base=parseFloat(pctOf[2].replace(',',''));result=(pct/100)*base;expression=`${pct}% of ${base}`;formatted=result%1===0?result.toLocaleString('en-IN'):result.toFixed(2);}
+  if(result===null){
+    const mathStr=msg.replace(/[^0-9+\-*/().%^√\s]/g,'').trim();
+    if(mathStr){try{const safe=mathStr.replace(/√(\d+)/g,'Math.sqrt($1)').replace(/\^/g,'**');result=Function('"use strict";return ('+safe+')')();expression=mathStr;formatted=typeof result==='number'?(result%1===0?result.toLocaleString('en-IN'):result.toFixed(6).replace(/0+$/','')):String(result);}catch{result=null;}}
+  }
+  if(result===null){const nums=msg.match(/[\d,]+\.?\d*/g);if(nums&&nums.length>=2){const a=parseFloat(nums[0].replace(',','')),b=parseFloat(nums[1].replace(',',''));if(/plus|\badd\b/.test(msg)){result=a+b;expression=`${a} + ${b}`;}else if(/minus|subtract/.test(msg)){result=a-b;expression=`${a} - ${b}`;}else if(/times|multiply|×/.test(msg)){result=a*b;expression=`${a} × ${b}`;}else if(/divide|÷/.test(msg)&&b!==0){result=a/b;expression=`${a} ÷ ${b}`;}if(result!==null)formatted=result%1===0?result.toLocaleString('en-IN'):result.toFixed(4).replace(/0+$/,'');}}
+  if(result===null||isNaN(result))return{reply:hi?'माफ़ करें, यह हिसाब नहीं हो पाया।':"Couldn't compute that. Try **\"18% of 4500\"** or **\"145 * 7\"**.",tools:['calculate']};
+  if(!formatted)formatted=result%1===0?result.toLocaleString('en-IN'):result.toFixed(6).replace(/0+$/,'');
+  return{reply:`**${expression||'Result'}** = **${formatted}**`,tools:['calculate']};
+}
+
+function handleConvert(msg,hi){
+  const pairs=[
+    {from:/\bkm\b/i,to:/\bmile/i,factor:0.621371,fu:'km',tu:'miles'},
+    {from:/\bmile/i,to:/\bkm\b/i,factor:1.60934,fu:'miles',tu:'km'},
+    {from:/\bkg\b/i,to:/\blb/i,factor:2.20462,fu:'kg',tu:'lbs'},
+    {from:/\blb/i,to:/\bkg\b/i,factor:0.453592,fu:'lbs',tu:'kg'},
+    {from:/\bmetre|meter\b/i,to:/\bfeet|foot\b/i,factor:3.28084,fu:'metres',tu:'feet'},
+    {from:/\bfeet|foot\b/i,to:/\bmetre|meter\b/i,factor:0.3048,fu:'feet',tu:'metres'},
+    {from:/\blitre|liter\b/i,to:/\bgallon\b/i,factor:0.264172,fu:'litres',tu:'gallons'},
+    {from:/\bgb\b/i,to:/\bmb\b/i,factor:1024,fu:'GB',tu:'MB'},
+    {from:/\bmb\b/i,to:/\bgb\b/i,factor:1/1024,fu:'MB',tu:'GB'},
+  ];
+  const cToF=msg.match(/([\d.]+)\s*(?:°?c|celsius)/i);
+  const fToC=msg.match(/([\d.]+)\s*(?:°?f|fahrenheit)/i);
+  if(cToF){const c=parseFloat(cToF[1]),f=c*9/5+32;return{reply:`**${c}°C = ${f.toFixed(1)}°F**`,tools:['convert_units']};}
+  if(fToC){const f=parseFloat(fToC[1]),c=(f-32)*5/9;return{reply:`**${f}°F = ${c.toFixed(1)}°C**`,tools:['convert_units']};}
+  const numMatch=msg.match(/([\d,]+\.?\d*)/);
+  const val=numMatch?parseFloat(numMatch[1].replace(',','')):1;
+  for(const p of pairs){if(p.from.test(msg)&&p.to.test(msg)){const r=(val*p.factor);const rs=r%1===0?r.toFixed(0):r.toFixed(4).replace(/0+$/,'');return{reply:`**${val} ${p.fu} = ${rs} ${p.tu}**`,tools:['convert_units']};}}
+  for(const p of pairs){if(p.from.test(msg)){const r=(val*p.factor);const rs=r%1===0?r.toFixed(0):r.toFixed(4).replace(/0+$/,'');return{reply:`**${val} ${p.fu} = ${rs} ${p.tu}**`,tools:['convert_units']};}}
+  return{reply:'I can convert km/miles, kg/lbs, metres/feet, litres/gallons, GB/MB, °C/°F.\n\nTry: **"Convert 100 km to miles"**',tools:['convert_units']};
+}
+
+function handleWhatsNew(hi){
+  showScreen('news');
+  const items=NEWS_DATA.slice(0,3);
+  if(hi)return{reply:`JioJoin में नया:\n\n${items.map(n=>`**${n.title}**\n${n.body}`).join('\n\n')}\n\nWhat's New टैब में सब देखें!`,tools:['get_whats_new']};
+  return{reply:`Here's what's new in JioJoin:\n\n${items.map(n=>`**${n.title}**\n${n.body}`).join('\n\n')}\n\nCheck the **What's New** tab for more!`,tools:['get_whats_new']};
+}
+
+function handleInterests(msg,hi){
+  const map={cricket:['cricket','sports','ipl'],cooking:['cooking','food','recipe'],fitness:['fitness','gym','exercise','workout'],finance:['finance','money','invest','stock'],music:['music','song'],travel:['travel','trip'],gaming:['gaming','game'],movies:['movie','film']};
+  const found=[];
+  for(const[topic,keys]of Object.entries(map)){if(keys.some(k=>msg.toLowerCase().includes(k)))found.push(topic);}
+  if(!found.length)found.push('general knowledge');
+  interests=[...new Set([...interests,...found])];
+  const recs={cricket:'IPL schedule, Virat Kohli analysis, T20 predictions',cooking:'Quick 30-min Indian recipes, Healthy breakfast ideas, Air fryer tips',fitness:'HIIT plans, Protein-rich vegetarian diet, Sleep optimisation',finance:'Mutual fund SIP guide, Tax-saving under 80C, Budgeting frameworks',music:'Top Hindi hits, Trending playlists on JioSaavn'};
+  const s=found.map(t=>`• **${capitalise(t)}**: ${recs[t]||'Curated tips coming daily'}`).join('\n');
+  if(hi)return{reply:`बढ़िया! रुचियाँ सेव हो गई: **${found.join(', ')}**\n\n${s}`,tools:['update_user_interests']};
+  return{reply:`Saved your interests: **${found.join(', ')}** 🎯\n\n${s}\n\nAsk me to explore any of these!`,tools:['update_user_interests']};
+}
+
+function handleExplore(msg,hi){
+  const map={cricket:['cricket'],cooking:['cooking','food'],fitness:['fitness','exercise'],finance:['finance','money','invest'],gold:['gold','gold price'],music:['music'],health:['health','wellness']};
+  let found=null;
+  for(const[topic,keys]of Object.entries(map)){if(keys.some(k=>msg.toLowerCase().includes(k))){found=topic;break;}}
+  if(!found&&interests.length)found=interests[0];
+  const facts={
+    cricket:`🏏 **Cricket Quick Facts:**\n• Sachin Tendulkar: only player with 100 international centuries\n• Longest Test: 14 days (England vs SA, 1939)\n• India has won the World Cup 3 times (1983, 2007, 2011)`,
+    cooking:`🍳 **Quick Cooking Tips:**\n• Rest meat 5-10 min after cooking for juicier results\n• Salt pasta water well — it should taste like the sea\n• A pinch of sugar balances acidic tomato sauce`,
+    fitness:`💪 **Fitness Insights:**\n• Progressive overload is the #1 muscle-building principle\n• Sleep is when muscles actually repair and grow\n• Walking 10,000 steps/day cuts heart disease risk by 30%`,
+    finance:`💰 **Money Tips:**\n• 50/30/20 rule: 50% needs, 30% wants, 20% savings\n• ₹5,000/month SIP at age 25 → ~₹3.5 crore by 60 (at 12%)\n• Emergency fund = 6 months of expenses`,
+    gold:`📈 **Gold Market (general context):**\n• Gold is a global safe-haven asset — prices rise during uncertainty\n• Influenced by USD strength, inflation, and geopolitical events\n• In India, gold demand peaks during Dhanteras & wedding season\n• For real-time prices, add a Groq key above for live AI answers!`,
+  };
+  const content=facts[found]||`I'd love to tell you more about **${found||'that topic'}**! For in-depth, real-time answers on any subject, add your free Groq API key above to unlock Live AI mode.`;
+  if(hi)return{reply:`${content}\n\nऔर जानना है?`,tools:['explore_interest']};
+  return{reply:`${content}\n\nWant to go deeper? Just ask! 😊`,tools:['explore_interest']};
+}
+
+function handleGreeting(hi){
+  if(hi)return{reply:`नमस्ते! 🙏 मैं जिओ हूँ — आपका JioJoin AI असिस्टेंट। काम जोड़ना, याद दिलाना, हिसाब करना — सब कुछ! कैसे मदद करूँ?`,tools:[]};
+  return{reply:`Hello! 👋 I'm Jio, your personal AI assistant.\n\nI can help with **tasks**, **reminders**, **calculations**, **unit conversions**, **what's new**, and **exploring your interests**.\n\nWhat can I do for you today?`,tools:[]};
+}
+
+function handleHelp(hi){
+  if(hi)return{reply:`मैं इन चीज़ों में मदद कर सकता हूँ:\n\n✅ काम जोड़ना — "काम जोड़ो: रिपोर्ट बनाना"\n🔔 याद दिलाना — "कल 9 बजे याद दिलाओ"\n🧮 गणना — "4500 का 18% क्या है?"\n📏 यूनिट बदलना — "100 km को miles में"\n🆕 नया क्या है\n🎯 रुचियाँ — "मुझे cricket पसंद है"`,tools:[]};
+  return{reply:`Here's what I can do:\n\n✅ **Tasks** — _"Add task: Submit report by Friday"_\n🔔 **Reminders** — _"Remind me at 9am tomorrow"_\n🧮 **Calculator** — _"18% of 4500"_\n📏 **Converter** — _"100 km to miles"_\n🆕 **What's New** — _"What's new in JioJoin?"_\n🎯 **Interests** — _"I love cricket and finance"_\n🌐 **Bilingual** — English & Hindi!\n\n💡 Add a Groq key for unlimited general knowledge answers!`,tools:[]};
+}
+
+function handleFallback(hi){
+  if(hi)return{reply:`माफ़ करें, यह समझ नहीं आया। काम जोड़ने, याद दिलाने या हिसाब के लिए कहें!\n\n💡 Live AI के लिए ऊपर Groq key डालें।`,tools:[]};
+  return{reply:`I'm not sure about that in demo mode.\n\n💡 **Tip:** Add a free **Groq API key** at the top to unlock full AI — then I can answer anything, including current events, news, and general knowledge!`,tools:[]};
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+function toNiceDate(str){
+  if(!str)return null;
+  const s=str.trim().toLowerCase();
+  const d=new Date();
+  if(s==='today')return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  if(s==='tomorrow'){d.setDate(d.getDate()+1);return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
+  const days={monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6,sunday:0};
+  if(days[s]!==undefined){let diff=days[s]-d.getDay();if(diff<=0)diff+=7;d.setDate(d.getDate()+diff);return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});}
+  return str.trim();
+}
+function capitalise(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function toast(msg,type='info'){
+  const tc=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;t.textContent=msg;
+  tc.appendChild(t);setTimeout(()=>t.remove(),3000);
+}
+</script>
+</body>
+</html>
