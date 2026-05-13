@@ -1,0 +1,93 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# JioJoin Personal AI Agent — docker-compose.yml
+#
+# LOCAL DEV  →  docker compose up
+# PROD-LIKE  →  docker compose --profile postgres up
+#
+# Copy .env.example → .env and fill in your secrets before running.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── FastAPI backend ─────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: jiojoin-api
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      # Pass all env vars through from the host .env file
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - APP_ENV=${APP_ENV:-development}
+      - GROQ_MODEL=${GROQ_MODEL:-llama-3.3-70b-versatile}
+      - AGENT_TEMPERATURE=${AGENT_TEMPERATURE:-0.6}
+      - MAX_CONVERSATION_HISTORY=${MAX_CONVERSATION_HISTORY:-20}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-10080}
+      # SQLite by default; switch to postgres profile below for PostgreSQL
+      - DATABASE_URL=${DATABASE_URL:-sqlite+aiosqlite:////data/jiojoin.db}
+    volumes:
+      # Persist SQLite database outside the container
+      - jiojoin-data:/data
+      # Hot-reload in development (mount source into container)
+      - .:/app
+    command: >
+      uvicorn main:app
+        --host 0.0.0.0
+        --port 8000
+        --reload
+        --log-level debug
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false   # Only waits if postgres service is active
+
+  # ── PostgreSQL (activate with --profile postgres) ───────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: jiojoin-postgres
+    profiles: ["postgres"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-jiojoin}
+      POSTGRES_USER: ${POSTGRES_USER:-jiojoin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jiojoin_secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-jiojoin}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Adminer (lightweight DB UI, dev only) ───────────────────────────────────
+  adminer:
+    image: adminer:latest
+    container_name: jiojoin-adminer
+    profiles: ["postgres"]
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  jiojoin-data:
+    driver: local
+  postgres-data:
+    driver: local
