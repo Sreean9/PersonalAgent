@@ -1,0 +1,48 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+ 
+# ── Virtual envs ─────────────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+ 
+# ── Local dev artefacts ───────────────────────────────────────────────────────
+.env
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+ 
+# ── IDE / OS ─────────────────────────────────────────────────────────────────
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db
+ 
+# ── Test / CI ────────────────────────────────────────────────────────────────
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+ 
+# ── Docs / extras not needed in image ────────────────────────────────────────
+README.md
+docs/
+*.md
+netlify/
+netlify.toml
+Procfile
+simulator.html
+jiojoin-demo.html
+ 
